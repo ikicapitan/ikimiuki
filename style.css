@@ -4,19 +4,20 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    color: #eee; /* Texto claro para fondo oscuro */
-    /* Degradado de negro a negro apenas más claro */
-    background: linear-gradient(to bottom, #000000 0%, #151515 100%);
+    color: #eee;
+    /* Degradado del cuerpo: Negro a Antracita */
+    background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
     background-attachment: fixed;
     min-height: 100vh;
 }
 
-/* 2. Header */
+/* 2. Header (Se mantiene intacto según tu original) */
 .custom-header {
-    /* Degradado del celeste original hacia el negro del cuerpo */
-    background: linear-gradient(to bottom, #76b5c5 0%, #000000 100%);
+    background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 40px 20px;
     text-align: center;
+    /* Separación ínfima con el cuerpo */
+    margin-bottom: 20px; 
 }
 
 .logo-container {
@@ -120,7 +121,7 @@ body {
     color: #bbb;
 }
 
-/* 5. Secciones de Texto y Cards (Estilo Dark Glass) */
+/* 5. Secciones de Texto y Cards (Glassmorphism) */
 #hero {
     margin: 40px auto;
     padding: 25px;
@@ -150,12 +151,6 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
     height: auto;
     backdrop-filter: blur(10px);
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.06);
 }
 
 .card h3 {
