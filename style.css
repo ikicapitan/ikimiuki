@@ -7,17 +7,82 @@ body {
 }
 
 header {
-    padding: 2rem;
-    text-align: center;
     background: #fff;
     border-bottom: 1px solid #eee;
+    padding: 1rem 0;
 }
 
-nav a {
-    margin: 0 15px;
-    text-decoration: none;
-    color: #666;
-    font-weight: bold;
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Espaciador para mantener el logo realmente centrado */
+.spacer {
+    flex: 1;
+}
+
+.logo-container {
+    flex: 1;
+    text-align: center;
+}
+
+.main-logo {
+    max-width: 200px; /* Ajusta según el tamaño de tu logo */
+    height: auto;
+}
+
+.social-icons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.social-icons img {
+    width: 32px;
+    height: 32px;
+    transition: opacity 0.3s;
+}
+
+.social-icons img:hover {
+    opacity: 0.7;
+}
+
+/* Barra de navegación */
+.main-nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 2rem 0;
+    margin-top: 1rem;
+}
+
+.main-nav img {
+    height: 50px; /* Ajusta según tus botones de menú */
+    width: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Animación de titileo/pulso suave */
+.main-nav img:hover {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 #hero {
@@ -57,9 +122,15 @@ footer {
     color: #999;
 }
 
-@media (max-width: 600px) {
-    nav a {
-        display: block;
-        margin: 10px 0;
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .spacer { display: none; }
+    .social-icons { justify-content: center; }
+    .main-nav {
+        flex-wrap: wrap;
+        gap: 20px;
     }
 }
