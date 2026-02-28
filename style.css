@@ -8,6 +8,9 @@ body {
     background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
     background-attachment: fixed;
     min-height: 100vh;
+    /* Esto asegura que el contenido no se pegue al header */
+    display: flex;
+    flex-direction: column;
 }
 
 /* 2. Header */
@@ -15,7 +18,8 @@ body {
     background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 40px 20px;
     text-align: center;
-    margin-bottom: 20px; 
+    /* Separador físico */
+    border-bottom: 20px solid transparent; 
 }
 
 .logo-container {
@@ -56,15 +60,16 @@ body {
 /* 3. Contenedor Principal y Fondo */
 .content-wrapper {
     max-width: 1100px;
+    width: 100%;
     margin: 0 auto;
-    padding: 40px 20px 80px 20px; /* Aumenté el padding inferior (80px) */
+    /* El primer valor es el espacio con el Header */
+    padding: 40px 20px 80px 20px; 
     text-align: center;
     background-image: url('img/centerBackground.png');
     background-repeat: no-repeat;
     background-position: center top;
     background-size: 100% auto;
-    min-height: 100vh;
-    display: block;
+    flex-grow: 1; /* Empuja al footer hacia abajo */
 }
 
 /* 4. El Reel */
@@ -160,14 +165,13 @@ body {
     margin-bottom: 0;
 }
 
-/* 6. Footer (Corregido con separación clara) */
+/* 6. Footer */
 footer {
     padding: 60px 20px;
     text-align: center;
     color: #666;
-    background-color: #0a0a0a; /* Un tono ligeramente diferente para marcar el fin */
+    background-color: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: 50px; /* Separación con el cuerpo */
     width: 100%;
 }
 
@@ -179,13 +183,7 @@ footer {
     .reel-info h2 {
         font-size: 1.2rem;
     }
-    .reel-info p {
-        font-size: 0.9rem;
-    }
     .content-wrapper {
         padding: 20px 10px 60px 10px;
-    }
-    .main-logo {
-        max-width: 220px;
     }
 }
