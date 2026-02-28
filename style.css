@@ -5,18 +5,16 @@ body {
     margin: 0;
     padding: 0;
     color: #eee;
-    /* Degradado del cuerpo: Negro a Antracita */
     background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
     background-attachment: fixed;
     min-height: 100vh;
 }
 
-/* 2. Header (Se mantiene intacto según tu original) */
+/* 2. Header */
 .custom-header {
     background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 40px 20px;
     text-align: center;
-    /* Separación ínfima con el cuerpo */
     margin-bottom: 20px; 
 }
 
@@ -59,7 +57,7 @@ body {
 .content-wrapper {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 40px 20px 80px 20px; /* Aumenté el padding inferior (80px) */
     text-align: center;
     background-image: url('img/centerBackground.png');
     background-repeat: no-repeat;
@@ -83,7 +81,7 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    padding-top: 56.25%; /* Relación 16:9 */
+    padding-top: 56.25%; 
 }
 
 .reel-slide img {
@@ -121,7 +119,7 @@ body {
     color: #bbb;
 }
 
-/* 5. Secciones de Texto y Cards (Glassmorphism) */
+/* 5. Secciones de Texto y Cards */
 #hero {
     margin: 40px auto;
     padding: 25px;
@@ -140,7 +138,6 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
     margin-top: 40px;
-    padding-bottom: 60px;
 }
 
 .card {
@@ -163,13 +160,15 @@ body {
     margin-bottom: 0;
 }
 
-/* 6. Footer */
+/* 6. Footer (Corregido con separación clara) */
 footer {
     padding: 60px 20px;
     text-align: center;
     color: #666;
-    background-color: transparent;
+    background-color: #0a0a0a; /* Un tono ligeramente diferente para marcar el fin */
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 50px; /* Separación con el cuerpo */
+    width: 100%;
 }
 
 /* 7. Responsive */
@@ -184,7 +183,7 @@ footer {
         font-size: 0.9rem;
     }
     .content-wrapper {
-        padding: 20px 10px;
+        padding: 20px 10px 60px 10px;
     }
     .main-logo {
         max-width: 220px;
