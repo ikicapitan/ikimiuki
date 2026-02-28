@@ -54,7 +54,7 @@ body {
     padding: 80px 40px;
     text-align: center;
     background-image: url('img/centerBackground.png');
-    background-repeat: repeat-y;
+    background-repeat: no-repeat;
     background-position: center top;
     background-size: 100% auto;
     min-height: 100vh;
@@ -156,14 +156,4 @@ footer {
         background-size: 100% auto;
     }
     .cat-nav img { height: 60px; }
-    .main-logo { max-width: 240px; }
-    .reel-slide {
-        height: 300px;
-    }
-}
-
-@media (max-width: 480px) {
-    .reel-slide {
-        height: 200px;
-    }
-}
+    .
