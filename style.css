@@ -50,13 +50,14 @@ body {
 
 .content-wrapper {
     max-width: 1100px;
-    margin: 20px auto;
-    padding: 60px 40px;
+    margin: 0 auto;
+    padding: 80px 40px;
     text-align: center;
     background-image: url('img/centerBackground.png');
     background-repeat: no-repeat;
     background-position: center top;
     background-size: 100% auto;
+    min-height: 100vh;
 }
 
 .reel-container {
@@ -73,7 +74,7 @@ body {
     background: #000;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .reel-slide img {
@@ -109,12 +110,15 @@ body {
 }
 
 #hero {
-    padding: 20px 0;
+    padding: 20px;
     font-size: 1.2rem;
     font-style: italic;
-    color: #555;
+    color: #333;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
 }
 
 .grid {
@@ -125,25 +129,25 @@ body {
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.85);
     padding: 25px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
 }
 
 footer {
-    padding: 40px;
+    padding: 60px 40px;
     color: #999;
     text-align: center;
 }
 
 @media (max-width: 768px) {
     .content-wrapper {
-        padding: 20px;
+        padding: 40px 20px;
         background-size: cover;
     }
-    .cat-nav img { height: 55px; }
-    .reel-info h2 { font-size: 1.3rem; }
-    .main-logo { max-width: 220px; }
+    .cat-nav img { height: 60px; }
+    .reel-info h2 { font-size: 1.4rem; }
+    .main-logo { max-width: 240px; }
 }
