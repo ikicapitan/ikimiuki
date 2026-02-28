@@ -4,44 +4,47 @@ body {
     margin: 0;
     color: #333;
     background-color: #fafafa;
-}
-
-/* Header Ajustado sin Redes */
-.custom-header {
-    background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
-    padding: 20px 0 0 0;
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.top-row {
-    display: flex;
-    justify-content: center;
+header, main, footer {
     width: 100%;
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header con degradado */
+.custom-header {
+    background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
+    padding: 40px 0 20px 0;
+}
+
+.logo-wrapper {
+    margin-bottom: 30px;
 }
 
 .main-logo {
-    max-width: 280px;
+    max-width: 300px;
     height: auto;
+    display: block;
 }
 
 /* Menú de Patas */
 .cat-nav {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    padding-bottom: 30px;
+    gap: 20px;
     flex-wrap: wrap;
+    max-width: 1000px;
 }
 
 .cat-nav img {
-    height: 85px;
+    height: 80px;
     width: auto;
     transition: transform 0.3s ease-in-out;
-    cursor: pointer;
 }
 
 .cat-nav img:hover {
@@ -54,88 +57,78 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Estilos del Reel Central */
+/* Reel Central */
 .reel-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.reel-slide {
-    position: relative;
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.reel-slide img {
     width: 100%;
-    display: block;
-    opacity: 0.9;
-    transition: opacity 0.3s;
+    max-width: 900px;
+    margin: 40px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.reel-text {
+.reel-card {
+    position: relative;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    background: #000;
+}
+
+.reel-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0.85;
+}
+
+.reel-overlay {
     position: absolute;
     bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 2rem;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    color: #fff;
+    width: 100%;
+    padding: 30px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    color: white;
+    box-sizing: border-box;
 }
 
-.reel-text h2 {
-    margin: 0;
-    font-size: 1.8rem;
-}
+.reel-overlay h2 { margin: 0; font-size: 1.8rem; }
+.reel-overlay p { margin: 10px 0 0; font-style: italic; }
 
-.reel-text p {
-    margin: 0.5rem 0 0;
-    font-style: italic;
-    font-size: 1.1rem;
-}
-
-/* Secciones de contenido */
-#hero {
-    padding: 2rem;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    font-style: italic;
-    color: #555;
-}
-
+/* Grid de Secciones */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
+    padding: 40px 20px;
+    box-sizing: border-box;
 }
 
 .card {
     background: #fff;
-    padding: 2rem;
-    border: 1px solid #eee;
+    padding: 25px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    transition: transform 0.3s;
+    text-align: center;
 }
 
-.card:hover {
-    transform: translateY(-5px);
+#hero {
+    text-align: center;
+    max-width: 700px;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-style: italic;
 }
 
 footer {
-    text-align: center;
-    padding: 3rem;
-    color: #bbb;
+    padding: 40px;
+    color: #999;
+    font-size: 0.8rem;
 }
 
-@media (max-width: 768px) {
-    .cat-nav img { height: 60px; }
-    .reel-text h2 { font-size: 1.4rem; }
-    .reel-text p { font-size: 0.9rem; }
+@media (max-width: 600px) {
+    .cat-nav img { height: 55px; }
+    .reel-overlay h2 { font-size: 1.3rem; }
 }
