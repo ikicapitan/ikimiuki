@@ -7,7 +7,6 @@ body {
     background-color: #fafafa;
 }
 
-/* Header con degradado y centrado real */
 .custom-header {
     background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 40px 20px 20px 20px;
@@ -24,7 +23,6 @@ body {
     display: inline-block;
 }
 
-/* Menú de Patas */
 .cat-nav {
     display: flex;
     justify-content: center;
@@ -50,22 +48,24 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Contenedor principal centrado */
 .content-wrapper {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    text-align: center;
 }
 
-/* Reel Central */
 .reel-container {
     width: 100%;
-    margin-bottom: 40px;
+    margin: 20px auto 40px auto;
+    display: flex;
+    justify-content: center;
 }
 
 .reel-slide {
     position: relative;
     width: 100%;
+    max-width: 900px;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
@@ -77,6 +77,7 @@ body {
     height: auto;
     display: block;
     opacity: 0.9;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .reel-info {
@@ -87,14 +88,23 @@ body {
     padding: 2rem;
     background: linear-gradient(transparent, rgba(0,0,0,0.85));
     color: #fff;
+    text-align: left;
 }
 
-.reel-info h2 { margin: 0; font-size: 1.8rem; }
-.reel-info p { margin: 10px 0 0; font-style: italic; }
+.reel-info h2 { 
+    margin: 0; 
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
 
-/* Grid de Secciones */
+.reel-info p { 
+    margin: 5px 0 0; 
+    font-style: italic;
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
 #hero {
-    text-align: center;
     padding: 20px 0;
     font-size: 1.2rem;
     font-style: italic;
@@ -113,11 +123,9 @@ body {
     padding: 25px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    text-align: center;
 }
 
 footer {
-    text-align: center;
     padding: 40px;
     color: #999;
 }

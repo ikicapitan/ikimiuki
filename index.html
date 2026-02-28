@@ -23,11 +23,11 @@
 
     <main class="content-wrapper">
         <section class="reel-container">
-            <div class="reel-slide">
-                <img src="img/reel-1.jpg" alt="Destacado">
+            <div id="reel" class="reel-slide">
+                <img id="reel-img" src="img/reel-1.jpg" alt="Destacado">
                 <div class="reel-info">
-                    <h2>Título de la Obra</h2>
-                    <p>Una descripción que transmita humanidad y el peso del destino.</p>
+                    <h2 id="reel-title">Título de la Obra</h2>
+                    <p id="reel-subtitle">Una descripción que transmita humanidad y el peso del destino.</p>
                 </div>
             </div>
         </section>
@@ -59,5 +59,45 @@
     <footer>
         <p>&copy; 2026 Iki - Argentina</p>
     </footer>
+
+    <script>
+        const data = [
+            {
+                img: "img/reel-1.jpg",
+                title: "Dragon Quest Builders 2",
+                subtitle: "Mi juego favorito y una gran inspiración en diseño."
+            },
+            {
+                img: "img/reel-2.jpg",
+                title: "Hacer el amor con la mirada",
+                subtitle: "Orfebrería narrativa sobre la observación del dolor."
+            },
+            {
+                img: "img/reel-3.jpg",
+                title: "Escuela de Juegos",
+                subtitle: "Reflexiones sobre la industria y la ética creativa."
+            }
+        ];
+
+        let index = 0;
+        const imgEl = document.getElementById('reel-img');
+        const titleEl = document.getElementById('reel-title');
+        const subtitleEl = document.getElementById('reel-subtitle');
+
+        function changeSlide() {
+            index = (index + 1) % data.length;
+            
+            imgEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                imgEl.src = data[index].img;
+                titleEl.textContent = data[index].title;
+                subtitleEl.textContent = data[index].subtitle;
+                imgEl.style.opacity = 0.9;
+            }, 500);
+        }
+
+        setInterval(changeSlide, 5000);
+    </script>
 </body>
 </html>
