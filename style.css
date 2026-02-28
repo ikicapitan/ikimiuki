@@ -6,11 +6,12 @@ body {
     background-color: #fafafa;
 }
 
+/* Header con el degradado de tu imagen */
 .custom-header {
     background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 20px 0 0 0;
     position: relative;
-    min-height: 300px;
+    min-height: 320px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -24,19 +25,21 @@ body {
     position: relative;
 }
 
+/* Logo del gato centrado */
 .logo-center img {
     max-width: 250px;
     height: auto;
 }
 
+/* Icono de red social (plato) arriba a la derecha */
 .social-right {
     position: absolute;
-    right: 30px;
+    right: 40px;
     top: 10px;
 }
 
 .social-btn {
-    width: 60px;
+    width: 70px;
     height: auto;
     transition: transform 0.2s;
 }
@@ -45,33 +48,34 @@ body {
     transform: scale(1.1);
 }
 
-/* Menú de patas de gato */
+/* Menú de patas de gato (5 secciones) */
 .cat-nav {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding-bottom: 20px;
+    gap: 15px;
+    padding-bottom: 30px;
     flex-wrap: wrap;
 }
 
 .cat-nav img {
-    height: 80px; /* Tamaño de los botones de patas */
+    height: 85px;
     width: auto;
     transition: transform 0.3s ease-in-out;
     cursor: pointer;
 }
 
-/* Animación de latido/titileo suave */
+/* Animación de latido/titileo suave al pasar el mouse */
 .cat-nav img:hover {
     animation: pulse 1.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
+/* Secciones de contenido */
 #hero {
     padding: 3rem 2rem;
     text-align: center;
@@ -79,13 +83,51 @@ body {
     margin: 0 auto;
     font-size: 1.2rem;
     font-style: italic;
+    color: #555;
 }
 
-/* Media Query para móviles */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: #fff;
+    padding: 2rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #222;
+    border-bottom: 2px solid #76b5c5;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+footer {
+    text-align: center;
+    padding: 3rem;
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+/* Ajustes para móviles */
 @media (max-width: 768px) {
     .social-right {
         position: static;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         text-align: center;
     }
     .top-row {
@@ -93,5 +135,8 @@ body {
     }
     .cat-nav img {
         height: 60px;
+    }
+    .custom-header {
+        min-height: auto;
     }
 }
