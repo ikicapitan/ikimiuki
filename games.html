@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iki | Artista & Developer</title>
+    <title>Games | Iki</title>
     <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@pixi-spine/all-3.8@4.x/dist/pixi-spine-3.8.js"></script>
-    
 </head>
 <body>
     <header class="custom-header">
@@ -21,23 +18,25 @@
         </nav>
     </header>
 
-    <div class="reel-stage">
-        <div class="reel-container">
-            <div id="reel">
-                <div id="canvas-reel"></div>
-                <div class="info-reel">
-                    <h2 id="reel-title">Cargando...</h2>
-                    <p id="reel-subtitle">Preparando el escenario</p>
+    <main class="main-content">
+        <div class="grid">
+            <div class="game-stage">
+                <div class="card card-game">
+                    <a href="juego-detalle.html">
+                        <div class="tv-overlay"></div>
+                        <img src="img/game1.jpg" alt="COMING SOON" class="game-img">
+                        <div class="card-body">
+                            <h3>COMING SOON...</h3>
+                            <p>This game will be revealed soon.</p>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <a href="#" id="reel-link" class="overlay-link"></a>
         </div>
-    </div>
+    </main>
 
     <footer>
         <p>&copy; 2026 Iki - Argentina</p>
     </footer>
-
-    <script src="js/reel-pixi.js"></script>
 </body>
 </html>
