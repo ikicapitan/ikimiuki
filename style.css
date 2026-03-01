@@ -8,7 +8,6 @@ body {
     background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
     background-attachment: fixed;
     min-height: 100vh;
-    /* Esto asegura que el contenido no se pegue al header */
     display: flex;
     flex-direction: column;
 }
@@ -18,8 +17,9 @@ body {
     background: linear-gradient(to bottom, #76b5c5 0%, #ffffff 100%);
     padding: 40px 20px;
     text-align: center;
-    /* Separador físico */
-    border-bottom: 20px solid transparent; 
+    /* SEPARACIÓN BASADA EN EL BOTÓN: 110px */
+    margin-bottom: 110px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .logo-container {
@@ -48,7 +48,7 @@ body {
 }
 
 .cat-nav img {
-    height: 110px;
+    height: 110px; /* Nuestra medida de referencia */
     width: auto;
     transition: transform 0.3s ease;
 }
@@ -62,21 +62,21 @@ body {
     max-width: 1100px;
     width: 100%;
     margin: 0 auto;
-    /* El primer valor es el espacio con el Header */
-    padding: 40px 20px 80px 20px; 
+    /* Mantenemos un padding superior de media "patita" (55px) */
+    padding: 55px 20px 110px 20px; 
     text-align: center;
     background-image: url('img/centerBackground.png');
     background-repeat: no-repeat;
     background-position: center top;
     background-size: 100% auto;
-    flex-grow: 1; /* Empuja al footer hacia abajo */
+    flex-grow: 1; 
 }
 
 /* 4. El Reel */
 .reel-container {
     width: 100%;
     max-width: 900px;
-    margin: 0 auto 50px auto;
+    margin: 0 auto 55px auto;
 }
 
 .reel-slide {
@@ -126,7 +126,7 @@ body {
 
 /* 5. Secciones de Texto y Cards */
 #hero {
-    margin: 40px auto;
+    margin: 55px auto;
     padding: 25px;
     max-width: 800px;
     font-size: 1.2rem;
@@ -142,7 +142,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
-    margin-top: 40px;
+    margin-top: 55px;
 }
 
 .card {
@@ -155,35 +155,30 @@ body {
     backdrop-filter: blur(10px);
 }
 
-.card h3 {
-    margin-top: 0;
-    color: #fff;
-}
-
-.card p {
-    color: #ccc;
-    margin-bottom: 0;
-}
-
 /* 6. Footer */
 footer {
-    padding: 60px 20px;
+    padding: 80px 20px;
     text-align: center;
     color: #666;
     background-color: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     width: 100%;
+    /* Margen superior de un botón entero */
+    margin-top: 110px; 
 }
 
 /* 7. Responsive */
 @media (max-width: 768px) {
     .cat-nav img {
-        height: 75px;
+        height: 75px; /* Referencia en móvil: 75px */
     }
-    .reel-info h2 {
-        font-size: 1.2rem;
+    .custom-header {
+        margin-bottom: 75px; 
     }
     .content-wrapper {
-        padding: 20px 10px 60px 10px;
+        padding: 30px 10px 75px 10px;
+    }
+    footer {
+        margin-top: 75px;
     }
 }
