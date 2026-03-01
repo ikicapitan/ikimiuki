@@ -24,6 +24,7 @@ const app = new PIXI.Application({
 contenedorCanvas.appendChild(app.view);
 
 let character = null;
+let characterShadow = null; // Sombra manual
 let backgroundSprite = null;
 let backgroundMask = null;
 let texturasCargadas = [];
@@ -47,7 +48,6 @@ async function initPixi() {
             texturasCargadas.push(await PIXI.Assets.load(obra.img));
         }
 
-        // Máscara solo para el fondo
         backgroundMask = new PIXI.Graphics();
         app.stage.addChild(backgroundMask);
 
@@ -67,15 +67,36 @@ async function initPixi() {
         const spineJsonParser = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas));
         const spineData = spineJsonParser.readSkeletonData(skeletonDataRaw);
 
+        // CREAR PERSONAJE REAL
         character = new spineLib.Spine(spineData);
         const anim = character.spineData.animations.find(a => a.name === 'idle') ? 'idle' : character.spineData.animations[0].name;
         character.state.setAnimation(0, anim, true);
 
-        // Personaje sin máscara para que pueda sobresalir
+        // CREAR SOMBRA (Duplicado del Spine)
+        characterShadow = new spineLib.Spine(spineData);
+        characterShadow.state.setAnimation(0, anim, true);
+        characterShadow.tint = 0x000000; // Totalmente negra
+        characterShadow.alpha = 0;       // Invisible al inicio
+
+        // Añadimos primero la sombra para que quede atrás
+        app.stage.addChild(characterShadow);
         app.stage.addChild(character);
 
         app.ticker.add(() => {
             currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
+            
+            // Efecto Pop-up 3D en la sombra
+            if (characterShadow) {
+                const intensity = (currentScaleMult - 1) / (hoverScale - 1); // 0 a 1
+                characterShadow.alpha = intensity * 0.4; // Aparece suavemente
+                
+                // Desplazamos la sombra hacia abajo y a la derecha para dar profundidad
+                const offset = intensity * 20; 
+                characterShadow.x = character.x + offset;
+                characterShadow.y = character.y + offset;
+                characterShadow.scale.set(character.scale.x);
+            }
+
             ajustarEscena();
         });
 
@@ -92,14 +113,11 @@ function ajustarEscena() {
     if (!backgroundSprite) return;
     
     const { width, height } = app.screen;
-
-    // Área del marco real (el 100% original dentro del canvas de 140%)
     const innerW = width / 1.4;
     const innerH = height / 1.4;
     const marginX = (width - innerW) / 2;
     const marginY = (height - innerH) / 2;
 
-    // Actualizamos la máscara para que el fondo se corte ahí
     backgroundMask.clear();
     backgroundMask.beginFill(0xffffff);
     backgroundMask.drawRect(marginX, marginY, innerW, innerH);
@@ -112,11 +130,18 @@ function ajustarEscena() {
     backgroundSprite.scale.set(ratio);
 
     if (character) {
-        character.visible = (indiceActual === 0);
+        const isVisible = (indiceActual === 0);
+        character.visible = isVisible;
+        characterShadow.visible = isVisible;
+
         character.x = width / 2;
         const mitadAltura = (character.spineData.height * ratio) / 2;
         character.y = (height / 2) + mitadAltura;
+        
         character.scale.set(ratio * currentScaleMult);
+        
+        // Sincronizar escala de sombra con el personaje
+        characterShadow.scale.set(character.scale.x);
     }
 }
 
