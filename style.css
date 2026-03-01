@@ -56,7 +56,7 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     position: relative; 
-    overflow: hidden;
+    overflow: visible; /* Clave: permite que el canvas sobresalga */
 }
 
 .reel-container {
@@ -67,15 +67,19 @@ body {
     width: 90%;
     height: 90%;
     max-width: 800px;
+    cursor: pointer;
+    overflow: visible;
 }
 
 #canvas-reel {
-    width: 100%;
-    height: 100%;
+    /* El canvas es un 40% más grande que el marco para que nada se corte */
+    width: 140%; 
+    height: 140%;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -20%; 
+    left: -20%;
     z-index: 1;
+    pointer-events: none;
 }
 
 .info-reel {
@@ -110,6 +114,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: 3;
+    text-decoration: none;
 }
 
 footer {
