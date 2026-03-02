@@ -1,123 +1,181 @@
 const obras = [
-    { img: "img/reel-1.jpg", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "games.html" },
+    { video: "video/reel-1.mp4", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "games.html" },
     { img: "img/reel-2.jpg", titulo: "MY MUSIC CHANNEL", subtitulo: "FIND ALL MY COMPOSITIONS", link: "music.html" },
-    { img: "img/reel-3.jpg", titulo: "PIRATAS ZORRETES", subtitulo: "MY STORYTELLING & COMEDY VIDEOS", link: "books.html" }
+    { video: "video/reel-3.mp4", titulo: "PIRATAS ZORRETES", subtitulo: "MY STORYTELLING & COMEDY VIDEOS", link: "books.html" }
 ];
 
 let indiceActual = 0;
 let isHovered = false;
 let targetScaleMult = 1;
 let currentScaleMult = 1;
-const lerpSpeed = 0.08;
-const hoverScale = 1.08; // Antes era 1.15, ahora es más sutil
+const lerpSpeed = 0.2; 
+const hoverScale = 1.08;
+
+const notasMusicales = ["♪", "♫", "♩", "♬", "♭", "♮"];
+let particles = [];
+let lastMousePos = { x: 0, y: 0 };
+let beatTimer = 0;
+let currentBeatScale = 1;
 
 const contenedorCanvas = document.getElementById('canvas-reel');
 const reelLink = document.getElementById('reel-link');
 
-const app = new PIXI.Application({
+const appFondo = new PIXI.Application({
     width: contenedorCanvas.clientWidth,
-    height: contenedorCanvas.clientHeight * 1.5, 
+    height: contenedorCanvas.clientHeight * 1.5,
     backgroundAlpha: 0,
     antialias: true,
     resolution: window.devicePixelRatio || 1,
     autoDensity: true
 });
+contenedorCanvas.appendChild(appFondo.view);
+appFondo.view.style.position = "absolute";
+appFondo.view.style.bottom = "0px";
+appFondo.view.style.zIndex = "1";
 
-contenedorCanvas.appendChild(app.view);
+const appNotas = new PIXI.Application({
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundAlpha: 0,
+    antialias: true,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true
+});
+document.body.appendChild(appNotas.view);
+appNotas.view.style.position = "fixed";
+appNotas.view.style.top = "0";
+appNotas.view.style.left = "0";
+appNotas.view.style.pointerEvents = "none"; 
+appNotas.view.style.zIndex = "10000";
 
-app.view.style.position = "absolute";
-app.view.style.bottom = "0px"; 
-app.view.style.height = "150%"; 
+const particleContainer = new PIXI.Container();
+appNotas.stage.addChild(particleContainer);
 
 const mainStage = new PIXI.Container();
-app.stage.addChild(mainStage);
+appFondo.stage.addChild(mainStage);
 
-let character = null;
-let characterShadow = null;
-let backgroundSprite = null;
-let texturasCargadas = [];
+let character = null, characterShadow = null, backgroundSprite = null;
+let texturasCargadas = new Array(obras.length).fill(null);
 
 async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
-
-        for (const obra of obras) {
-            texturasCargadas.push(await PIXI.Assets.load(obra.img));
+        const primeraTex = await PIXI.Assets.load(obras[0].video || obras[0].img);
+        if (obras[0].video) {
+            const s = primeraTex.baseTexture.resource.source;
+            s.muted = s.loop = s.playsInline = true;
+            s.play().catch(() => {});
         }
-
+        texturasCargadas[0] = primeraTex;
         backgroundSprite = new PIXI.Sprite(texturasCargadas[0]);
         backgroundSprite.anchor.set(0.5);
-        mainStage.addChild(backgroundSprite);
+        mainStage.addChildAt(backgroundSprite, 0);
 
         const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
         const response = await fetch('./assets/spine/rockinghorse.json');
         const skeletonDataRaw = await response.json();
-        if (skeletonDataRaw.skeleton) skeletonDataRaw.skeleton.spine = "3.8.99";
-
-        const spineJsonParser = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas));
-        const spineData = spineJsonParser.readSkeletonData(skeletonDataRaw);
-
+        const spineData = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas)).readSkeletonData(skeletonDataRaw);
         character = new spineLib.Spine(spineData);
         characterShadow = new spineLib.Spine(spineData);
-        
-        const anim = character.spineData.animations.find(a => a.name === 'idle') ? 'idle' : character.spineData.animations[0].name;
+        const anim = character.spineData.animations[0].name;
         [character, characterShadow].forEach(c => c.state.setAnimation(0, anim, true));
+        characterShadow.tint = 0x000000; characterShadow.alpha = 0;
+        mainStage.addChild(characterShadow, character);
 
-        characterShadow.tint = 0x000000;
-        characterShadow.alpha = 0;
-
-        mainStage.addChild(characterShadow);
-        mainStage.addChild(character);
-
-        app.ticker.add(() => {
-            currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
-            
-            const visibleHeight = app.screen.height / 1.5;
-            const offsetUp = app.screen.height - visibleHeight;
-            
-            mainStage.position.set(app.screen.width / 2, offsetUp + (visibleHeight / 2));
-
-            if (backgroundSprite) {
-                const tex = backgroundSprite.texture;
-                const scaleFactor = Math.min(app.screen.width / tex.width, visibleHeight / tex.height);
-                backgroundSprite.scale.set(scaleFactor);
-
-                if (character && indiceActual === 0) {
-                    character.visible = characterShadow.visible = true;
-                    
-                    // Ajuste: Reducimos el extraGrow de 0.3 a 0.18 para un efecto menos brusco
-                    const extraGrow = 0.18; 
-                    const hoverProgress = (currentScaleMult - 1) / (hoverScale - 1);
-                    const finalScale = scaleFactor * (1 + (extraGrow * hoverProgress));
-                    
-                    character.scale.set(finalScale);
-                    characterShadow.scale.set(finalScale);
-
-                    character.x = 0;
-                    character.y = (tex.height / 2) * scaleFactor;
-
-                    characterShadow.alpha = hoverProgress * 0.4;
-                    const shadowOff = hoverProgress * 15 * scaleFactor;
-                    characterShadow.position.set(character.x + shadowOff, character.y + shadowOff);
-                } else if (character) {
-                    character.visible = characterShadow.visible = false;
-                }
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            const w = contenedorCanvas.clientWidth;
-            const h = contenedorCanvas.clientHeight;
-            app.renderer.resize(w, h * 1.5);
-            app.view.style.height = "150%";
-        });
-
-        updateUI();
+        cargarRestoDeObras();
+        appFondo.ticker.add(updateLoop);
+        appNotas.ticker.add(updateParticles);
         setInterval(cambiarObra, 5000);
+        window.addEventListener('resize', onResize);
+        window.addEventListener('mousemove', onMouseMoveGlobal);
+        updateUI();
+    } catch (e) { console.error(e); }
+}
 
-    } catch (e) {
-        console.error(e);
+async function cargarRestoDeObras() {
+    for (let i = 1; i < obras.length; i++) {
+        await new Promise(r => setTimeout(r, 150));
+        const tex = await PIXI.Assets.load(obras[i].video || obras[i].img);
+        if (obras[i].video) {
+            const s = tex.baseTexture.resource.source;
+            s.muted = s.loop = s.preload = "auto";
+        }
+        texturasCargadas[i] = tex;
     }
+}
+
+function onMouseMoveGlobal(e) {
+    const dist = Math.hypot(e.clientX - lastMousePos.x, e.clientY - lastMousePos.y);
+    if (dist > 12) {
+        crearNota(e.clientX, e.clientY);
+        lastMousePos = { x: e.clientX, y: e.clientY };
+    }
+}
+
+function crearNota(x, y) {
+    const p = new PIXI.Text(notasMusicales[Math.floor(Math.random() * notasMusicales.length)], {
+        fill: "#ffffff", fontSize: Math.random() * 8 + 14, fontFamily: 'Arial',
+        dropShadow: true, dropShadowBlur: 4, dropShadowAlpha: 0.3
+    });
+    p.x = x; p.y = y; p.anchor.set(0.5);
+    p.vx = (Math.random() - 0.5) * 1.5; p.vy = (Math.random() - 1.8) * 1;
+    p.vRotation = (Math.random() - 0.5) * 0.1; p.life = 1.0;
+    particleContainer.addChild(p);
+    particles.push(p);
+}
+
+function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.rotation += p.vRotation;
+        p.life -= 0.025; p.alpha = p.life;
+        if (p.life <= 0) { particleContainer.removeChild(p); particles.splice(i, 1); }
+    }
+}
+
+function updateLoop() {
+    currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
+    
+    if (indiceActual === 1) {
+        beatTimer += 0.12; 
+        const pulsoBase = Math.abs(Math.sin(beatTimer)) + 0.3;
+        const ataque = Math.pow(pulsoBase, 8); 
+        currentBeatScale = 1 + (ataque * 0.02); 
+    } else {
+        beatTimer = 0;
+        currentBeatScale += (1 - currentBeatScale) * 0.2; 
+    }
+
+    const vH = appFondo.screen.height / 1.5;
+    mainStage.position.set(appFondo.screen.width / 2, (appFondo.screen.height - vH) + (vH / 2));
+
+    if (backgroundSprite && backgroundSprite.texture) {
+        const tex = backgroundSprite.texture;
+        const baseScale = Math.min(appFondo.screen.width / tex.width, vH / tex.height);
+        
+        // --- SOLUCIÓN AQUÍ ---
+        // El fondo solo usa currentBeatScale (latido) si es el reel 2.
+        // NO usa currentScaleMult (que es el hover) nunca.
+        backgroundSprite.scale.set(baseScale * currentBeatScale);
+
+        if (character && indiceActual === 0) {
+            character.visible = true;
+            const bS = vH * 0.00085;
+            const hP = (currentScaleMult - 1) / (hoverScale - 1);
+            
+            // Solo el Spine (caballo) reacciona al Hover
+            character.scale.set(bS * (1 + (0.15 * hP)));
+            characterShadow.scale.set(character.scale.x);
+            character.x = 0; character.y = (tex.height / 2) * baseScale;
+            characterShadow.alpha = hP * 0.4;
+            characterShadow.position.set(character.x + hP * 15 * baseScale, character.y + hP * 15 * baseScale);
+        } else if (character) { character.visible = false; }
+    }
+}
+
+function onResize() {
+    appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
+    appNotas.renderer.resize(window.innerWidth, window.innerHeight);
 }
 
 function updateUI() {
@@ -128,14 +186,18 @@ function updateUI() {
 
 function cambiarObra() {
     if (isHovered) return;
-    const reelUI = document.querySelector('.info-reel');
-    if (reelUI) reelUI.style.opacity = 0;
-    
+    const ui = document.querySelector('.info-reel');
+    if (ui) ui.style.opacity = 0;
     setTimeout(() => {
         indiceActual = (indiceActual + 1) % obras.length;
-        if (backgroundSprite) backgroundSprite.texture = texturasCargadas[indiceActual];
+        if (indiceActual !== 0) { targetScaleMult = 1; currentScaleMult = 1; }
+        if (backgroundSprite && texturasCargadas[indiceActual]) {
+            backgroundSprite.texture = texturasCargadas[indiceActual];
+            const s = backgroundSprite.texture.baseTexture.resource.source;
+            if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
+        }
         updateUI();
-        if (reelUI) reelUI.style.opacity = 1;
+        if (ui) ui.style.opacity = 1;
     }, 400);
 }
 
