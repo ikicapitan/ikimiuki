@@ -14,8 +14,6 @@ const hoverScale = 1.08;
 const notasMusicales = ["♪", "♫", "♩", "♬", "♭", "♮"];
 let particles = [];
 let lastMousePos = { x: 0, y: 0 };
-let beatTimer = 0;
-let currentBeatScale = 1;
 
 const contenedorCanvas = document.getElementById('canvas-reel');
 const reelLink = document.getElementById('reel-link');
@@ -133,19 +131,9 @@ function updateParticles() {
     }
 }
 
-function updateLoop() {
+function updateLoop(delta) {
     currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
     
-    if (indiceActual === 1) {
-        beatTimer += 0.12; 
-        const pulsoBase = Math.abs(Math.sin(beatTimer)) + 0.3;
-        const ataque = Math.pow(pulsoBase, 8); 
-        currentBeatScale = 1 + (ataque * 0.02); 
-    } else {
-        beatTimer = 0;
-        currentBeatScale += (1 - currentBeatScale) * 0.2; 
-    }
-
     const vH = appFondo.screen.height / 1.5;
     mainStage.position.set(appFondo.screen.width / 2, (appFondo.screen.height - vH) + (vH / 2));
 
@@ -153,23 +141,36 @@ function updateLoop() {
         const tex = backgroundSprite.texture;
         const baseScale = Math.min(appFondo.screen.width / tex.width, vH / tex.height);
         
-        // --- SOLUCIÓN AQUÍ ---
-        // El fondo solo usa currentBeatScale (latido) si es el reel 2.
-        // NO usa currentScaleMult (que es el hover) nunca.
-        backgroundSprite.scale.set(baseScale * currentBeatScale);
+        backgroundSprite.scale.set(baseScale);
 
-        if (character && indiceActual === 0) {
+        // Lógica de rotación para el Reel 2
+        if (indiceActual === 1) {
+            // 2 * Math.PI / (7 segundos * 60 fps)
+            backgroundSprite.rotation += 0.0149 * delta;
+        } else {
+            backgroundSprite.rotation = 0; // Reset para otros reels
+        }
+
+        if (character && characterShadow && indiceActual === 0) {
             character.visible = true;
+            characterShadow.visible = true;
+
             const bS = vH * 0.00085;
             const hP = (currentScaleMult - 1) / (hoverScale - 1);
             
-            // Solo el Spine (caballo) reacciona al Hover
             character.scale.set(bS * (1 + (0.15 * hP)));
+            character.x = 0; 
+            character.y = (tex.height / 2) * baseScale;
+
             characterShadow.scale.set(character.scale.x);
-            character.x = 0; character.y = (tex.height / 2) * baseScale;
             characterShadow.alpha = hP * 0.4;
-            characterShadow.position.set(character.x + hP * 15 * baseScale, character.y + hP * 15 * baseScale);
-        } else if (character) { character.visible = false; }
+            characterShadow.x = character.x + (12 * baseScale * hP);
+            characterShadow.y = character.y + (12 * baseScale * hP);
+            
+        } else if (character && characterShadow) { 
+            character.visible = false; 
+            characterShadow.visible = false;
+        }
     }
 }
 
@@ -193,6 +194,7 @@ function cambiarObra() {
         if (indiceActual !== 0) { targetScaleMult = 1; currentScaleMult = 1; }
         if (backgroundSprite && texturasCargadas[indiceActual]) {
             backgroundSprite.texture = texturasCargadas[indiceActual];
+            backgroundSprite.rotation = 0; // Reset rotación al cambiar
             const s = backgroundSprite.texture.baseTexture.resource.source;
             if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
         }
