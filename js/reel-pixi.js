@@ -9,19 +9,25 @@ let isHovered = false;
 let targetScaleMult = 1;
 let currentScaleMult = 1;
 const lerpSpeed = 0.08;
-const hoverScale = 1.15;
+const hoverScale = 1.08; // Antes era 1.15, ahora es más sutil
 
 const contenedorCanvas = document.getElementById('canvas-reel');
 const reelLink = document.getElementById('reel-link');
 
 const app = new PIXI.Application({
-    resizeTo: contenedorCanvas,
+    width: contenedorCanvas.clientWidth,
+    height: contenedorCanvas.clientHeight * 1.5, 
     backgroundAlpha: 0,
     antialias: true,
     resolution: window.devicePixelRatio || 1,
     autoDensity: true
 });
+
 contenedorCanvas.appendChild(app.view);
+
+app.view.style.position = "absolute";
+app.view.style.bottom = "0px"; 
+app.view.style.height = "150%"; 
 
 const mainStage = new PIXI.Container();
 app.stage.addChild(mainStage);
@@ -65,31 +71,33 @@ async function initPixi() {
 
         app.ticker.add(() => {
             currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
-            mainStage.position.set(app.screen.width / 2, app.screen.height / 2);
+            
+            const visibleHeight = app.screen.height / 1.5;
+            const offsetUp = app.screen.height - visibleHeight;
+            
+            mainStage.position.set(app.screen.width / 2, offsetUp + (visibleHeight / 2));
 
             if (backgroundSprite) {
                 const tex = backgroundSprite.texture;
-                
-                // CONTAIN: La imagen se ve completa sin cortarse
-                const scaleFactor = Math.min(app.screen.width / tex.width, app.screen.height / tex.height);
+                const scaleFactor = Math.min(app.screen.width / tex.width, visibleHeight / tex.height);
                 backgroundSprite.scale.set(scaleFactor);
 
                 if (character && indiceActual === 0) {
                     character.visible = characterShadow.visible = true;
                     
-                    // El personaje mantiene escala 1:1 con la imagen, más el hover
-                    character.scale.set(currentScaleMult);
-                    characterShadow.scale.set(currentScaleMult);
-
-                    // POSICIÓN: El piso es el final de la textura (tex.height / 2 desde el centro)
-                    character.x = 0;
-                    character.y = tex.height / 2;
-
-                    const intensity = (currentScaleMult - 1) / (hoverScale - 1);
-                    characterShadow.alpha = intensity * 0.4;
+                    // Ajuste: Reducimos el extraGrow de 0.3 a 0.18 para un efecto menos brusco
+                    const extraGrow = 0.18; 
+                    const hoverProgress = (currentScaleMult - 1) / (hoverScale - 1);
+                    const finalScale = scaleFactor * (1 + (extraGrow * hoverProgress));
                     
-                    // Ajuste de sombra
-                    const shadowOff = intensity * 20;
+                    character.scale.set(finalScale);
+                    characterShadow.scale.set(finalScale);
+
+                    character.x = 0;
+                    character.y = (tex.height / 2) * scaleFactor;
+
+                    characterShadow.alpha = hoverProgress * 0.4;
+                    const shadowOff = hoverProgress * 15 * scaleFactor;
                     characterShadow.position.set(character.x + shadowOff, character.y + shadowOff);
                 } else if (character) {
                     character.visible = characterShadow.visible = false;
@@ -98,7 +106,10 @@ async function initPixi() {
         });
 
         window.addEventListener('resize', () => {
-            app.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight);
+            const w = contenedorCanvas.clientWidth;
+            const h = contenedorCanvas.clientHeight;
+            app.renderer.resize(w, h * 1.5);
+            app.view.style.height = "150%";
         });
 
         updateUI();
