@@ -58,6 +58,10 @@ let texturasCargadas = new Array(obras.length).fill(null);
 async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
+        
+        // Aseguramos el tamaño antes de cargar texturas
+        appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
+
         const primeraTex = await PIXI.Assets.load(obras[0].video || obras[0].img);
         if (obras[0].video) {
             const s = primeraTex.baseTexture.resource.source;
@@ -79,6 +83,11 @@ async function initPixi() {
         [character, characterShadow].forEach(c => c.state.setAnimation(0, anim, true));
         characterShadow.tint = 0x000000; characterShadow.alpha = 0;
         mainStage.addChild(characterShadow, character);
+
+        // Disparamos la visibilidad una vez posicionado el primer frame
+        requestAnimationFrame(() => {
+            contenedorCanvas.classList.add('ready');
+        });
 
         cargarRestoDeObras();
         appFondo.ticker.add(updateLoop);
@@ -143,12 +152,10 @@ function updateLoop(delta) {
         
         backgroundSprite.scale.set(baseScale);
 
-        // Lógica de rotación para el Reel 2
         if (indiceActual === 1) {
-            // 2 * Math.PI / (7 segundos * 60 fps)
             backgroundSprite.rotation += 0.0149 * delta;
         } else {
-            backgroundSprite.rotation = 0; // Reset para otros reels
+            backgroundSprite.rotation = 0; 
         }
 
         if (character && characterShadow && indiceActual === 0) {
@@ -194,7 +201,7 @@ function cambiarObra() {
         if (indiceActual !== 0) { targetScaleMult = 1; currentScaleMult = 1; }
         if (backgroundSprite && texturasCargadas[indiceActual]) {
             backgroundSprite.texture = texturasCargadas[indiceActual];
-            backgroundSprite.rotation = 0; // Reset rotación al cambiar
+            backgroundSprite.rotation = 0; 
             const s = backgroundSprite.texture.baseTexture.resource.source;
             if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
         }
