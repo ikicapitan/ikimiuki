@@ -1,126 +1,137 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #000;
-    background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
-    background-attachment: fixed;
-    color: #eee;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
+  background-color: #000;
+  background: linear-gradient(to bottom, #000000 0%, #1a1a1a 100%);
+  background-attachment: fixed;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .custom-header {
-    width: 100%;
-    background: linear-gradient(to bottom, #76b5c5, #ffffff);
-    padding: 40px 0;
-    text-align: center;
-    position: relative;
-    z-index: 10;
+  width: 100%;
+  background: linear-gradient(to bottom, #76b5c5, #ffffff);
+  padding: 40px 0;
+  text-align: center;
+  position: relative;
+  z-index: 10;
 }
 
 .main-logo {
-    max-width: 250px;
-    height: auto;
-    margin-bottom: 20px;
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 .cat-nav {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
 }
 
 .cat-nav img {
-    height: 110px;
-    width: auto;
-    transition: transform 0.3s ease;
+  height: 110px;
+  width: auto;
+  transition: transform 0.3s ease;
 }
 
 .cat-nav img:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .reel-stage {
-    width: 100%;
-    max-width: 1100px;
-    height: 650px; 
-    margin: 40px auto;
-    background-image: url('img/centerBackground.png');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: relative; 
-    overflow: visible; /* Clave: permite que el canvas sobresalga */
+  width: 100%;
+  max-width: 1100px;
+  height: 650px;
+  margin: 40px auto;
+  background-image: url('img/centerBackground.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
 }
 
 .reel-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); 
-    width: 90%;
-    height: 90%;
-    max-width: 800px;
-    cursor: pointer;
-    overflow: visible;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  max-width: 800px;
+  cursor: pointer;
+  overflow: visible;
+}
+
+#reel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  overflow: hidden;
 }
 
 #canvas-reel {
-    /* El canvas es un 40% más grande que el marco para que nada se corte */
-    width: 140%; 
-    height: 140%;
-    position: absolute;
-    top: -20%; 
-    left: -20%;
-    z-index: 1;
-    pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#canvas-reel canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .info-reel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 40px 25px 25px 25px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    text-align: left;
-    z-index: 2;
-    pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 25px 25px 25px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  text-align: left;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 
 #reel-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #fff;
-    text-transform: uppercase;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
 }
 
 #reel-subtitle {
-    font-size: 1rem;
-    color: #ccc;
-    letter-spacing: 1px;
+  font-size: 1rem;
+  color: #ccc;
+  letter-spacing: 1px;
 }
 
 .overlay-link {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-    text-decoration: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 15;
 }
 
 footer {
-    width: 100%;
-    padding: 60px 20px;
-    text-align: center;
-    background: #050505;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+  padding: 60px 20px;
+  text-align: center;
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }

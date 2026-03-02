@@ -8,9 +8,8 @@ let indiceActual = 0;
 let isHovered = false;
 let targetScaleMult = 1;
 let currentScaleMult = 1;
-
-const lerpSpeed = 0.04; 
-const hoverScale = 1.20; 
+const lerpSpeed = 0.08;
+const hoverScale = 1.15;
 
 const contenedorCanvas = document.getElementById('canvas-reel');
 const reelLink = document.getElementById('reel-link');
@@ -19,158 +18,117 @@ const app = new PIXI.Application({
     resizeTo: contenedorCanvas,
     backgroundAlpha: 0,
     antialias: true,
-    hello: false
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true
 });
 contenedorCanvas.appendChild(app.view);
 
+const mainStage = new PIXI.Container();
+app.stage.addChild(mainStage);
+
 let character = null;
-let characterShadow = null; // Sombra manual
+let characterShadow = null;
 let backgroundSprite = null;
-let backgroundMask = null;
 let texturasCargadas = [];
-
-reelLink.addEventListener('mouseenter', () => {
-    isHovered = true;
-    targetScaleMult = hoverScale; 
-});
-
-reelLink.addEventListener('mouseleave', () => {
-    isHovered = false;
-    targetScaleMult = 1;
-});
 
 async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
-        if (!spineLib) throw new Error("Spine Plugin not found");
 
         for (const obra of obras) {
             texturasCargadas.push(await PIXI.Assets.load(obra.img));
         }
 
-        backgroundMask = new PIXI.Graphics();
-        app.stage.addChild(backgroundMask);
-
         backgroundSprite = new PIXI.Sprite(texturasCargadas[0]);
         backgroundSprite.anchor.set(0.5);
-        backgroundSprite.mask = backgroundMask; 
-        app.stage.addChild(backgroundSprite);
+        mainStage.addChild(backgroundSprite);
 
         const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
         const response = await fetch('./assets/spine/rockinghorse.json');
         const skeletonDataRaw = await response.json();
-
-        if (skeletonDataRaw.skeleton) {
-            skeletonDataRaw.skeleton.spine = "3.8.99";
-        }
+        if (skeletonDataRaw.skeleton) skeletonDataRaw.skeleton.spine = "3.8.99";
 
         const spineJsonParser = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas));
         const spineData = spineJsonParser.readSkeletonData(skeletonDataRaw);
 
-        // CREAR PERSONAJE REAL
         character = new spineLib.Spine(spineData);
-        const anim = character.spineData.animations.find(a => a.name === 'idle') ? 'idle' : character.spineData.animations[0].name;
-        character.state.setAnimation(0, anim, true);
-
-        // CREAR SOMBRA (Duplicado del Spine)
         characterShadow = new spineLib.Spine(spineData);
-        characterShadow.state.setAnimation(0, anim, true);
-        characterShadow.tint = 0x000000; // Totalmente negra
-        characterShadow.alpha = 0;       // Invisible al inicio
+        
+        const anim = character.spineData.animations.find(a => a.name === 'idle') ? 'idle' : character.spineData.animations[0].name;
+        [character, characterShadow].forEach(c => c.state.setAnimation(0, anim, true));
 
-        // Añadimos primero la sombra para que quede atrás
-        app.stage.addChild(characterShadow);
-        app.stage.addChild(character);
+        characterShadow.tint = 0x000000;
+        characterShadow.alpha = 0;
+
+        mainStage.addChild(characterShadow);
+        mainStage.addChild(character);
 
         app.ticker.add(() => {
             currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
-            
-            // Efecto Pop-up 3D en la sombra
-            if (characterShadow) {
-                const intensity = (currentScaleMult - 1) / (hoverScale - 1); // 0 a 1
-                characterShadow.alpha = intensity * 0.4; // Aparece suavemente
-                
-                // Desplazamos la sombra hacia abajo y a la derecha para dar profundidad
-                const offset = intensity * 20; 
-                characterShadow.x = character.x + offset;
-                characterShadow.y = character.y + offset;
-                characterShadow.scale.set(character.scale.x);
-            }
+            mainStage.position.set(app.screen.width / 2, app.screen.height / 2);
 
-            ajustarEscena();
+            if (backgroundSprite) {
+                const tex = backgroundSprite.texture;
+                
+                // CONTAIN: La imagen se ve completa sin cortarse
+                const scaleFactor = Math.min(app.screen.width / tex.width, app.screen.height / tex.height);
+                backgroundSprite.scale.set(scaleFactor);
+
+                if (character && indiceActual === 0) {
+                    character.visible = characterShadow.visible = true;
+                    
+                    // El personaje mantiene escala 1:1 con la imagen, más el hover
+                    character.scale.set(currentScaleMult);
+                    characterShadow.scale.set(currentScaleMult);
+
+                    // POSICIÓN: El piso es el final de la textura (tex.height / 2 desde el centro)
+                    character.x = 0;
+                    character.y = tex.height / 2;
+
+                    const intensity = (currentScaleMult - 1) / (hoverScale - 1);
+                    characterShadow.alpha = intensity * 0.4;
+                    
+                    // Ajuste de sombra
+                    const shadowOff = intensity * 20;
+                    characterShadow.position.set(character.x + shadowOff, character.y + shadowOff);
+                } else if (character) {
+                    character.visible = characterShadow.visible = false;
+                }
+            }
         });
 
-        window.addEventListener('resize', ajustarEscena);
+        window.addEventListener('resize', () => {
+            app.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight);
+        });
+
         updateUI();
         setInterval(cambiarObra, 5000);
 
     } catch (e) {
-        console.error("Pixi Error:", e);
-    }
-}
-
-function ajustarEscena() {
-    if (!backgroundSprite) return;
-    
-    const { width, height } = app.screen;
-    const innerW = width / 1.4;
-    const innerH = height / 1.4;
-    const marginX = (width - innerW) / 2;
-    const marginY = (height - innerH) / 2;
-
-    backgroundMask.clear();
-    backgroundMask.beginFill(0xffffff);
-    backgroundMask.drawRect(marginX, marginY, innerW, innerH);
-    backgroundMask.endFill();
-
-    backgroundSprite.x = width / 2;
-    backgroundSprite.y = height / 2;
-
-    const ratio = Math.min(innerW / backgroundSprite.texture.width, innerH / backgroundSprite.texture.height);
-    backgroundSprite.scale.set(ratio);
-
-    if (character) {
-        const isVisible = (indiceActual === 0);
-        character.visible = isVisible;
-        characterShadow.visible = isVisible;
-
-        character.x = width / 2;
-        const mitadAltura = (character.spineData.height * ratio) / 2;
-        character.y = (height / 2) + mitadAltura;
-        
-        character.scale.set(ratio * currentScaleMult);
-        
-        // Sincronizar escala de sombra con el personaje
-        characterShadow.scale.set(character.scale.x);
+        console.error(e);
     }
 }
 
 function updateUI() {
-    const titleEl = document.getElementById('reel-title');
-    const subtitleEl = document.getElementById('reel-subtitle');
-    const linkEl = document.getElementById('reel-link');
-    if (titleEl) titleEl.textContent = obras[indiceActual].titulo;
-    if (subtitleEl) subtitleEl.textContent = obras[indiceActual].subtitulo;
-    if (linkEl) linkEl.href = obras[indiceActual].link;
+    document.getElementById('reel-title').textContent = obras[indiceActual].titulo;
+    document.getElementById('reel-subtitle').textContent = obras[indiceActual].subtitulo;
+    document.getElementById('reel-link').href = obras[indiceActual].link;
 }
 
 function cambiarObra() {
     if (isHovered) return;
     const reelUI = document.querySelector('.info-reel');
-    if (reelUI) {
-        reelUI.style.transition = "opacity 0.4s";
-        reelUI.style.opacity = 0;
-    }
+    if (reelUI) reelUI.style.opacity = 0;
     
     setTimeout(() => {
         indiceActual = (indiceActual + 1) % obras.length;
-        if (backgroundSprite && texturasCargadas[indiceActual]) {
-            backgroundSprite.texture = texturasCargadas[indiceActual];
-        }
+        if (backgroundSprite) backgroundSprite.texture = texturasCargadas[indiceActual];
         updateUI();
-        ajustarEscena();
         if (reelUI) reelUI.style.opacity = 1;
     }, 400);
 }
+
+reelLink.addEventListener('mouseenter', () => { isHovered = true; targetScaleMult = hoverScale; });
+reelLink.addEventListener('mouseleave', () => { isHovered = false; targetScaleMult = 1; });
 
 initPixi();
