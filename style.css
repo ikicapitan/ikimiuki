@@ -14,17 +14,18 @@ body {
   overflow-x: hidden;
 }
 
-/* --- HEADER Y NAVEGACIÓN (CORREGIDO) --- */
+/* --- HEADER (Corregido para alinear botones) --- */
 .custom-header {
   width: 100%;
   background: linear-gradient(to bottom, #76b5c5, #ffffff);
-  padding: 30px 0; /* Un poco más compacto */
+  padding: 30px 0;
   text-align: center;
   position: relative;
-  z-index: 100; /* Aseguramos que siempre esté por encima de todo */
+  z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .main-logo {
@@ -41,17 +42,16 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .cat-nav a {
   display: inline-block;
-  line-height: 0; /* Evita espacios extra debajo de las imágenes */
+  text-decoration: none;
+  line-height: 0;
 }
 
 .cat-nav img {
-  height: 90px; /* Tamaño controlado para que no rompa el layout */
+  height: 90px;
   width: auto;
   transition: transform 0.3s ease;
   display: block;
@@ -61,12 +61,12 @@ body {
   transform: scale(1.1);
 }
 
-/* --- REEL STAGE (EL CONTENEDOR DEL FONDO DE MADERA) --- */
+/* --- CONTENEDOR DE MADERA (MARCO EXTERIOR) --- */
 .reel-stage {
   width: 100%;
   max-width: 1100px;
-  height: 600px; /* Ajustado levemente */
-  margin: 60px auto; /* Más margen arriba para separar del header */
+  height: 650px;
+  margin: 60px auto;
   background-image: url('img/centerBackground.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -75,7 +75,7 @@ body {
   overflow: visible !important;
 }
 
-/* --- CONTENEDOR DEL REEL NEGRO (CON AIRE) --- */
+/* --- CONTENEDOR DEL REEL (CON MARGENES DE AIRE) --- */
 .reel-container {
   position: absolute;
   top: 50%;
@@ -93,7 +93,8 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #000;
+  /* FONDO NEGRO TRASLÚCIDO: Permite ver la madera en los bordes vacíos */
+  background-color: rgba(0, 0, 0, 0.6); 
   overflow: visible !important;
 }
 
@@ -113,11 +114,10 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  /* No fijamos height aquí, lo maneja PIXI */
   overflow: visible !important;
 }
 
-/* --- INFO DEL REEL --- */
+/* --- INFORMACIÓN SOBRE EL REEL --- */
 .info-reel {
   position: absolute;
   bottom: 0;
@@ -136,12 +136,14 @@ body {
   font-weight: bold;
   color: #fff;
   margin: 0;
+  text-transform: uppercase;
 }
 
 #reel-subtitle {
   font-size: 0.9rem;
   color: #ccc;
   margin: 0;
+  letter-spacing: 1px;
 }
 
 .overlay-link {
@@ -153,10 +155,10 @@ body {
   z-index: 25;
 }
 
-/* --- FOOTER --- */
+/* --- PIE DE PÁGINA --- */
 footer {
   width: 100%;
-  padding: 50px 20px;
+  padding: 60px 20px;
   text-align: center;
   background: #050505;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
