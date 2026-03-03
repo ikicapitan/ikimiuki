@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games | Iki</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
 </head>
 <body>
     <header class="custom-header">
@@ -20,7 +21,6 @@
 
     <main class="main-content">
         <div class="grid-games">
-            
             <div class="game-slot featured">
                 <div class="card-container">
                     <div class="tv-lines"></div>
@@ -33,7 +33,6 @@
             </div>
 
             <div class="games-row">
-                
                 <div class="game-slot">
                     <div class="card-container">
                         <img src="img/game2.jpg" alt="Game 2" class="game-thumb">
@@ -43,7 +42,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="game-slot">
                     <div class="card-container">
                         <img src="img/game3.jpg" alt="Game 3" class="game-thumb">
@@ -53,12 +51,14 @@
                         </div>
                     </div>
                 </div>
-
-            </div> </div>
+            </div> 
+        </div>
     </main>
 
     <footer>
         <p>&copy; 2026 Iki - Argentina</p>
     </footer>
+
+    <script src="js/games-pixi.js"></script>
 </body>
 </html>
