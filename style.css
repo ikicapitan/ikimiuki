@@ -25,215 +25,114 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 
-.main-logo {
-  max-width: 250px;
-  height: auto;
-  margin-bottom: 20px;
-  display: block;
-}
+.main-logo { max-width: 250px; margin-bottom: 20px; }
+.cat-nav { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.cat-nav img { height: 90px; transition: transform 0.3s; }
+.cat-nav img:hover { transform: scale(1.1); }
 
-.cat-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.cat-nav a {
-  display: inline-block;
-  text-decoration: none;
-  line-height: 0;
-}
-
-.cat-nav img {
-  height: 90px;
-  width: auto;
-  transition: transform 0.3s ease;
-  display: block;
-}
-
-.cat-nav img:hover {
-  transform: scale(1.1);
-}
-
-/* --- CONTENEDOR DE MADERA --- */
+/* --- INDEX: REEL STAGE (ORIGINAL) --- */
 .reel-stage {
-  width: 100%;
-  max-width: 1100px;
-  height: 650px;
+  width: 100%; max-width: 1100px; height: 650px;
   margin: 60px auto;
   background-image: url('img/centerBackground.png');
   background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
   position: relative;
 }
 
 .reel-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 82%; 
-  height: 82%;
-  max-width: 800px;
-  cursor: pointer;
-  z-index: 15;
+  width: 82%; height: 82%;
+  max-width: 800px; cursor: pointer; z-index: 15;
 }
 
-#reel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); 
-}
+#reel { position: relative; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
 
 #canvas-reel {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.6s ease-out;
+  width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+  z-index: 1; opacity: 0; transition: opacity 0.6s;
 }
 
-#canvas-reel.ready {
-  opacity: 1;
-}
-
-#canvas-reel canvas {
-  display: block;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-}
+#canvas-reel.ready { opacity: 1; }
+#canvas-reel canvas { display: block; position: absolute; bottom: 0; width: 100%; }
 
 .info-reel {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 30px 20px;
+  position: absolute; bottom: 0; width: 100%; padding: 30px 20px;
   background: linear-gradient(transparent, rgba(0,0,0,0.8));
-  text-align: left;
-  z-index: 20;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+  pointer-events: none; z-index: 20;
 }
 
-#reel-title {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #fff;
-  margin: 0;
-  text-transform: uppercase;
+/* --- GAMES: SECCIÓN INDEPENDIENTE --- */
+.grid-games {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 50px; width: 100%; max-width: 1600px; margin: 60px auto; padding: 0 20px;
 }
 
-#reel-subtitle {
-  font-size: 0.9rem;
-  color: #ccc;
-  margin: 0;
-  letter-spacing: 1px;
+.grid-games .games-row {
+  display: flex; flex-direction: row; justify-content: center;
+  gap: 40px; width: 100%; flex-wrap: wrap;
 }
 
-.overlay-link {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 25;
+.grid-games .game-slot {
+  height: 400px; display: inline-flex; padding: 40px 50px;
+  background-image: url('img/centerBackground.png');
+  background-size: 100% 100%; position: relative;
+  transition: transform 0.3s; cursor: default;
 }
 
-footer {
-  width: 100%;
-  padding: 60px 20px;
-  text-align: center;
-  background: #050505;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  position: relative;
-  z-index: 10;
+.grid-games .game-slot.featured { height: 650px; padding: 60px 80px; }
+.grid-games .game-slot:hover { transform: translateY(-8px); }
+
+.grid-games .card-container {
+  height: 100%; width: auto; background: #000;
+  position: relative; overflow: hidden; display: flex;
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-
-/* Tablets y pantallas medianas */
-@media (max-width: 768px) {
-  .cat-nav {
-    gap: 15px;
-    padding: 0 10px;
-  }
-
-  .cat-nav img {
-    height: 70px;
-  }
-
-  .reel-stage {
-    height: 500px;
-    margin: 40px auto;
-  }
-
-  .reel-container {
-    width: 85%;
-    height: 85%;
-  }
-
-  #reel-title {
-    font-size: 1.3rem;
-  }
+.grid-games .game-thumb {
+  height: 100%; width: auto; display: block;
+  opacity: 0.85; transition: opacity 0.3s;
 }
 
-/* Móviles y pantallas pequeñas */
-@media (max-width: 480px) {
-  .custom-header {
-    padding: 20px 0;
-  }
+.grid-games .game-slot:hover .game-thumb { opacity: 1; }
 
-  .main-logo {
-    max-width: 180px;
-  }
-
-  .cat-nav {
-    gap: 10px;
-  }
-
-  .cat-nav img {
-    height: 55px;
-  }
-
-  .reel-stage {
-    height: 380px;
-    margin: 20px auto;
-    background-size: cover; /* Evita distorsión en móviles muy angostos */
-  }
-
-  .reel-container {
-    width: 90%;
-    height: 80%;
-  }
-
-  .info-reel {
-    padding: 15px 10px;
-  }
-
-  #reel-title {
-    font-size: 1.1rem;
-  }
-
-  #reel-subtitle {
-    font-size: 0.8rem;
-  }
-
-  footer {
-    padding: 40px 10px;
-  }
+/* EFECTOS TV SOLO PARA GAME 1 */
+.grid-games .game-slot.featured .tv-lines {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  background-size: 100% 2px, 3px 100%;
+  z-index: 2; pointer-events: none;
 }
+
+.grid-games .game-slot.featured .card-container::after {
+  content: ""; position: absolute; top: 100%; left: 0; width: 100%; height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+  z-index: 4; animation: scanline 5s linear infinite;
+}
+
+@keyframes scanline { 0% { top: 100%; } 100% { top: -5%; } }
+
+/* TEXTO SIEMPRE VISIBLE (IGUAL QUE EN INDEX) */
+.grid-games .game-info {
+  position: absolute; bottom: 0; width: 100%; padding: 25px 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+  z-index: 10; pointer-events: none;
+}
+
+.grid-games .game-info h3 {
+  font-size: 1.3rem; color: #fff; text-transform: uppercase;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+}
+
+.grid-games .game-info p { font-size: 0.9rem; color: #bbb; }
+
+/* FOOTER */
+footer { width: 100%; padding: 60px 20px; text-align: center; background: #050505; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .grid-games .games-row { flex-direction: column; align-items: center; }
+  .grid-games
