@@ -15,18 +15,21 @@ const notasMusicales = ["♪", "♫", "♩", "♬", "♭", "♮"];
 let particles = [];
 let lastMousePos = { x: 0, y: 0 };
 
-const contenedorCanvas = document.getElementById('canvas-reel-music');
+const contenedorCanvas = document.getElementById('canvas-reel');
 const reelLink = document.getElementById('reel-link');
 
 const appFondo = new PIXI.Application({
     width: contenedorCanvas.clientWidth,
-    height: contenedorCanvas.clientHeight,
+    height: contenedorCanvas.clientHeight * 1.5,
     backgroundAlpha: 0,
     antialias: true,
     resolution: window.devicePixelRatio || 1,
     autoDensity: true
 });
 contenedorCanvas.appendChild(appFondo.view);
+appFondo.view.style.position = "absolute";
+appFondo.view.style.bottom = "0px";
+appFondo.view.style.zIndex = "1";
 
 const appNotas = new PIXI.Application({
     width: window.innerWidth,
@@ -45,6 +48,7 @@ appNotas.view.style.zIndex = "10000";
 
 const particleContainer = new PIXI.Container();
 appNotas.stage.addChild(particleContainer);
+
 const mainStage = new PIXI.Container();
 appFondo.stage.addChild(mainStage);
 
@@ -54,6 +58,10 @@ let texturasCargadas = new Array(obras.length).fill(null);
 async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
+        
+        // Aseguramos el tamaño antes de cargar texturas
+        appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
+
         const primeraTex = await PIXI.Assets.load(obras[0].video || obras[0].img);
         if (obras[0].video) {
             const s = primeraTex.baseTexture.resource.source;
@@ -76,6 +84,11 @@ async function initPixi() {
         characterShadow.tint = 0x000000; characterShadow.alpha = 0;
         mainStage.addChild(characterShadow, character);
 
+        // Disparamos la visibilidad una vez posicionado el primer frame
+        requestAnimationFrame(() => {
+            contenedorCanvas.classList.add('ready');
+        });
+
         cargarRestoDeObras();
         appFondo.ticker.add(updateLoop);
         appNotas.ticker.add(updateParticles);
@@ -88,77 +101,113 @@ async function initPixi() {
 
 async function cargarRestoDeObras() {
     for (let i = 1; i < obras.length; i++) {
+        await new Promise(r => setTimeout(r, 150));
         const tex = await PIXI.Assets.load(obras[i].video || obras[i].img);
-        texturasCargadas[i] = tex;
-    }
-}
-
-function updateLoop(delta) {
-    currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
-    mainStage.position.set(appFondo.screen.width / 2, appFondo.screen.height / 2);
-
-    if (backgroundSprite && backgroundSprite.texture) {
-        const tex = backgroundSprite.texture;
-        const baseScale = Math.max(appFondo.screen.width / tex.width, appFondo.screen.height / tex.height);
-        backgroundSprite.scale.set(baseScale * currentScaleMult);
-
-        if (character && indiceActual === 0) {
-            character.visible = characterShadow.visible = true;
-            const bS = appFondo.screen.height * 0.001;
-            character.scale.set(bS);
-            character.y = appFondo.screen.height / 2.5;
-            characterShadow.scale.set(bS);
-            characterShadow.alpha = 0.4;
-            characterShadow.x = 10; characterShadow.y = character.y + 10;
-        } else if (character) {
-            character.visible = characterShadow.visible = false;
+        if (obras[i].video) {
+            const s = tex.baseTexture.resource.source;
+            s.muted = s.loop = s.preload = "auto";
         }
+        texturasCargadas[i] = tex;
     }
 }
 
 function onMouseMoveGlobal(e) {
     const dist = Math.hypot(e.clientX - lastMousePos.x, e.clientY - lastMousePos.y);
     if (dist > 12) {
-        const p = new PIXI.Text(notasMusicales[Math.floor(Math.random() * notasMusicales.length)], {
-            fill: "#ffffff", fontSize: Math.random() * 8 + 14, fontFamily: 'Arial'
-        });
-        p.x = e.clientX; p.y = e.clientY; p.anchor.set(0.5);
-        p.vx = (Math.random() - 0.5) * 1.5; p.vy = (Math.random() - 1.8) * 1;
-        p.life = 1.0;
-        particleContainer.addChild(p);
-        particles.push(p);
+        crearNota(e.clientX, e.clientY);
         lastMousePos = { x: e.clientX, y: e.clientY };
     }
+}
+
+function crearNota(x, y) {
+    const p = new PIXI.Text(notasMusicales[Math.floor(Math.random() * notasMusicales.length)], {
+        fill: "#ffffff", fontSize: Math.random() * 8 + 14, fontFamily: 'Arial',
+        dropShadow: true, dropShadowBlur: 4, dropShadowAlpha: 0.3
+    });
+    p.x = x; p.y = y; p.anchor.set(0.5);
+    p.vx = (Math.random() - 0.5) * 1.5; p.vy = (Math.random() - 1.8) * 1;
+    p.vRotation = (Math.random() - 0.5) * 0.1; p.life = 1.0;
+    particleContainer.addChild(p);
+    particles.push(p);
 }
 
 function updateParticles() {
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.life -= 0.025; p.alpha = p.life;
+        p.x += p.vx; p.y += p.vy; p.rotation += p.vRotation;
+        p.life -= 0.025; p.alpha = p.life;
         if (p.life <= 0) { particleContainer.removeChild(p); particles.splice(i, 1); }
     }
 }
 
+function updateLoop(delta) {
+    currentScaleMult += (targetScaleMult - currentScaleMult) * lerpSpeed;
+    
+    const vH = appFondo.screen.height / 1.5;
+    mainStage.position.set(appFondo.screen.width / 2, (appFondo.screen.height - vH) + (vH / 2));
+
+    if (backgroundSprite && backgroundSprite.texture) {
+        const tex = backgroundSprite.texture;
+        const baseScale = Math.min(appFondo.screen.width / tex.width, vH / tex.height);
+        
+        backgroundSprite.scale.set(baseScale);
+
+        if (indiceActual === 1) {
+            backgroundSprite.rotation += 0.0149 * delta;
+        } else {
+            backgroundSprite.rotation = 0; 
+        }
+
+        if (character && characterShadow && indiceActual === 0) {
+            character.visible = true;
+            characterShadow.visible = true;
+
+            const bS = vH * 0.00085;
+            const hP = (currentScaleMult - 1) / (hoverScale - 1);
+            
+            character.scale.set(bS * (1 + (0.15 * hP)));
+            character.x = 0; 
+            character.y = (tex.height / 2) * baseScale;
+
+            characterShadow.scale.set(character.scale.x);
+            characterShadow.alpha = hP * 0.4;
+            characterShadow.x = character.x + (12 * baseScale * hP);
+            characterShadow.y = character.y + (12 * baseScale * hP);
+            
+        } else if (character && characterShadow) { 
+            character.visible = false; 
+            characterShadow.visible = false;
+        }
+    }
+}
+
 function onResize() {
-    appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight);
+    appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
     appNotas.renderer.resize(window.innerWidth, window.innerHeight);
 }
 
 function updateUI() {
     document.getElementById('reel-title').textContent = obras[indiceActual].titulo;
     document.getElementById('reel-subtitle').textContent = obras[indiceActual].subtitulo;
-    reelLink.href = obras[indiceActual].link;
+    document.getElementById('reel-link').href = obras[indiceActual].link;
 }
 
 function cambiarObra() {
     if (isHovered) return;
-    indiceActual = (indiceActual + 1) % obras.length;
-    if (backgroundSprite && texturasCargadas[indiceActual]) {
-        backgroundSprite.texture = texturasCargadas[indiceActual];
-        const s = backgroundSprite.texture.baseTexture.resource.source;
-        if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
-    }
-    updateUI();
+    const ui = document.querySelector('.info-reel');
+    if (ui) ui.style.opacity = 0;
+    setTimeout(() => {
+        indiceActual = (indiceActual + 1) % obras.length;
+        if (indiceActual !== 0) { targetScaleMult = 1; currentScaleMult = 1; }
+        if (backgroundSprite && texturasCargadas[indiceActual]) {
+            backgroundSprite.texture = texturasCargadas[indiceActual];
+            backgroundSprite.rotation = 0; 
+            const s = backgroundSprite.texture.baseTexture.resource.source;
+            if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
+        }
+        updateUI();
+        if (ui) ui.style.opacity = 1;
+    }, 400);
 }
 
 reelLink.addEventListener('mouseenter', () => { isHovered = true; targetScaleMult = hoverScale; });
