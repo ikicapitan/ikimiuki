@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="music-content.css">
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@pixi-spine/all-3.8@4.x/dist/pixi-spine-3.8.js"></script>
 </head>
 <body>
     <header class="custom-header">
@@ -20,46 +21,46 @@
         </nav>
     </header>
 
-<main class="main-content">
-    <div class="grid-music">
-        <div class="music-slot featured">
-            <div class="card-container">
-                <div class="tv-lines"></div>
-                <img src="img/music-1.jpg" alt="Latest Release" class="album-thumb">
-                <div class="music-info">
-                    <h3>ROCKING HORSE GLITTERED</h3>
-                    <p>NEW INSTRUMENTAL ALBUM - 2026</p>
+    <main class="main-content">
+        <div class="grid-music">
+            <div class="music-slot featured">
+                <div class="card-container" id="canvas-reel">
+                    <div class="tv-lines"></div>
+                    <div class="info-reel">
+                        <h2 id="reel-title">Cargando...</h2>
+                        <p id="reel-subtitle">Iniciando sistema</p>
+                    </div>
+                    <a href="#" id="reel-link" class="overlay-link"></a>
                 </div>
             </div>
-        </div>
 
-        <div class="music-row">
-            <div class="music-slot">
-                <div class="card-container">
-                    <img src="img/music-2.jpg" alt="Composition 2" class="album-thumb">
-                    <div class="music-info">
-                        <h3>SSENDAS</h3>
-                        <p>THE MAGIC (2019)</p>
+            <div class="music-row">
+                <div class="music-slot">
+                    <div class="card-container">
+                        <img src="img/music-2.jpg" alt="Composition 2" class="album-thumb">
+                        <div class="music-info">
+                            <h3>SSENDAS</h3>
+                            <p>THE MAGIC (2019)</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="music-slot">
-                <div class="card-container">
-                    <img src="img/music-3.jpg" alt="Composition 3" class="album-thumb">
-                    <div class="music-info">
-                        <h3>SSENDAS</h3>
-                        <p>IN NOWHERE (2017)</p>
+                <div class="music-slot">
+                    <div class="card-container">
+                        <img src="img/music-3.jpg" alt="Composition 3" class="album-thumb">
+                        <div class="music-info">
+                            <h3>SSENDAS</h3>
+                            <p>IN NOWHERE (2017)</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div> 
-    </div>
-</main>
+            </div> 
+        </div>
+    </main>
 
     <footer>
         <p>&copy; 2026 Iki - Argentina</p>
     </footer>
 
-    <script src="js/music-pixi.js"></script>
+    <script src="js/main-pixi.js"></script>
 </body>
 </html>
