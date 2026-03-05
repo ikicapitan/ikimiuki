@@ -1,7 +1,5 @@
 const obras = [
-    { video: "video/reel-1.mp4", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "games.html" },
-    { img: "img/reel-2.jpg", titulo: "MY MUSIC CHANNEL", subtitulo: "FIND ALL MY COMPOSITIONS", link: "music.html" },
-    { video: "video/reel-3.mp4", titulo: "PIRATAS ZORRETES", subtitulo: "MY STORYTELLING & COMEDY VIDEOS", link: "books.html" }
+    { video: "video/reel-1.mp4", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "games.html" }
 ];
 
 let indiceActual = 0;
@@ -73,18 +71,23 @@ async function initPixi() {
         backgroundSprite.anchor.set(0.5);
         mainStage.addChildAt(backgroundSprite, 0);
 
+        // Usando tus rutas originales de assets
         const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
         const response = await fetch('./assets/spine/rockinghorse.json');
         const skeletonDataRaw = await response.json();
         const spineData = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas)).readSkeletonData(skeletonDataRaw);
+        
         character = new spineLib.Spine(spineData);
         characterShadow = new spineLib.Spine(spineData);
+        
         const anim = character.spineData.animations[0].name;
         [character, characterShadow].forEach(c => c.state.setAnimation(0, anim, true));
-        characterShadow.tint = 0x000000; characterShadow.alpha = 0;
+        
+        characterShadow.tint = 0x000000; 
+        characterShadow.alpha = 0;
+        
         mainStage.addChild(characterShadow, character);
 
-        // Disparamos la visibilidad una vez posicionado el primer frame
         requestAnimationFrame(() => {
             contenedorCanvas.classList.add('ready');
         });
@@ -92,7 +95,10 @@ async function initPixi() {
         cargarRestoDeObras();
         appFondo.ticker.add(updateLoop);
         appNotas.ticker.add(updateParticles);
+        
+        // Aunque haya una sola obra, mantenemos el intervalo por si agregás más después
         setInterval(cambiarObra, 5000);
+        
         window.addEventListener('resize', onResize);
         window.addEventListener('mousemove', onMouseMoveGlobal);
         updateUI();
@@ -152,6 +158,7 @@ function updateLoop(delta) {
         
         backgroundSprite.scale.set(baseScale);
 
+        // Si algún día ponés la obra 1, esto la hará rotar como en el main
         if (indiceActual === 1) {
             backgroundSprite.rotation += 0.0149 * delta;
         } else {
@@ -193,7 +200,7 @@ function updateUI() {
 }
 
 function cambiarObra() {
-    if (isHovered) return;
+    if (isHovered || obras.length <= 1) return;
     const ui = document.querySelector('.info-reel');
     if (ui) ui.style.opacity = 0;
     setTimeout(() => {
