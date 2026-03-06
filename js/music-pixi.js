@@ -57,21 +57,23 @@ async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
         
-        // Aseguramos el tamaño antes de cargar texturas
         appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
 
+        // 1. CARGA CRÍTICA (Primer elemento del Reel)
         const primeraTex = await PIXI.Assets.load(obras[0].video || obras[0].img);
         if (obras[0].video) {
             const s = primeraTex.baseTexture.resource.source;
             s.muted = s.loop = s.playsInline = true;
+            s.preload = "auto";
             s.play().catch(() => {});
         }
         texturasCargadas[0] = primeraTex;
+        
         backgroundSprite = new PIXI.Sprite(texturasCargadas[0]);
         backgroundSprite.anchor.set(0.5);
         mainStage.addChildAt(backgroundSprite, 0);
 
-        // Usando tus rutas originales de assets
+        // 2. CARGA DE SPINE (Inmediata para evitar saltos visuales)
         const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
         const response = await fetch('./assets/spine/rockinghorse.json');
         const skeletonDataRaw = await response.json();
@@ -92,11 +94,12 @@ async function initPixi() {
             contenedorCanvas.classList.add('ready');
         });
 
+        // 3. CARGA NO BLOQUEANTE (Para futuras obras si las agregas)
         cargarRestoDeObras();
+
         appFondo.ticker.add(updateLoop);
         appNotas.ticker.add(updateParticles);
         
-        // Aunque haya una sola obra, mantenemos el intervalo por si agregás más después
         setInterval(cambiarObra, 5000);
         
         window.addEventListener('resize', onResize);
@@ -106,15 +109,19 @@ async function initPixi() {
 }
 
 async function cargarRestoDeObras() {
-    for (let i = 1; i < obras.length; i++) {
-        await new Promise(r => setTimeout(r, 150));
-        const tex = await PIXI.Assets.load(obras[i].video || obras[i].img);
-        if (obras[i].video) {
+    if (obras.length <= 1) return;
+    
+    // Cargamos en paralelo sin bloquear el hilo principal
+    obras.map(async (obra, i) => {
+        if (i === 0) return;
+        const tex = await PIXI.Assets.load(obra.video || obra.img);
+        if (obra.video) {
             const s = tex.baseTexture.resource.source;
-            s.muted = s.loop = s.preload = "auto";
+            s.muted = s.loop = s.playsInline = true;
+            s.preload = "auto";
         }
         texturasCargadas[i] = tex;
-    }
+    });
 }
 
 function onMouseMoveGlobal(e) {
@@ -158,7 +165,6 @@ function updateLoop(delta) {
         
         backgroundSprite.scale.set(baseScale);
 
-        // Si algún día ponés la obra 1, esto la hará rotar como en el main
         if (indiceActual === 1) {
             backgroundSprite.rotation += 0.0149 * delta;
         } else {

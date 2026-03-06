@@ -59,24 +59,30 @@ async function initPixi() {
     try {
         const spineLib = window.PIXI_SPINE || PIXI.spine;
         
-        // Aseguramos el tamaño antes de cargar texturas
         appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
 
+        // 1. CARGA CRÍTICA (Solo lo que se ve al segundo 0)
+        // Cargamos la primera textura con prioridad máxima
         const primeraTex = await PIXI.Assets.load(obras[0].video || obras[0].img);
+        
         if (obras[0].video) {
             const s = primeraTex.baseTexture.resource.source;
             s.muted = s.loop = s.playsInline = true;
+            s.preload = "auto"; // Forzamos al navegador a bufferear
             s.play().catch(() => {});
         }
         texturasCargadas[0] = primeraTex;
+        
         backgroundSprite = new PIXI.Sprite(texturasCargadas[0]);
         backgroundSprite.anchor.set(0.5);
         mainStage.addChildAt(backgroundSprite, 0);
 
+        // 2. CARGA DEL PERSONAJE (También necesaria para el primer impacto)
         const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
         const response = await fetch('./assets/spine/rockinghorse.json');
         const skeletonDataRaw = await response.json();
         const spineData = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas)).readSkeletonData(skeletonDataRaw);
+        
         character = new spineLib.Spine(spineData);
         characterShadow = new spineLib.Spine(spineData);
         const anim = character.spineData.animations[0].name;
@@ -84,12 +90,13 @@ async function initPixi() {
         characterShadow.tint = 0x000000; characterShadow.alpha = 0;
         mainStage.addChild(characterShadow, character);
 
-        // Disparamos la visibilidad una vez posicionado el primer frame
         requestAnimationFrame(() => {
             contenedorCanvas.classList.add('ready');
         });
 
+        // 3. CARGA EN SEGUNDO PLANO (No bloqueante)
         cargarRestoDeObras();
+
         appFondo.ticker.add(updateLoop);
         appNotas.ticker.add(updateParticles);
         setInterval(cambiarObra, 5000);
@@ -99,16 +106,21 @@ async function initPixi() {
     } catch (e) { console.error(e); }
 }
 
+// Optimización: Carga paralela controlada
 async function cargarRestoDeObras() {
-    for (let i = 1; i < obras.length; i++) {
-        await new Promise(r => setTimeout(r, 150));
-        const tex = await PIXI.Assets.load(obras[i].video || obras[i].img);
-        if (obras[i].video) {
+    // Lanzamos las cargas al mismo tiempo pero sin 'await' inmediato 
+    // para que no bloqueen la ejecución del ticker
+    const promesas = obras.map(async (obra, i) => {
+        if (i === 0) return; // Ya cargada
+        
+        const tex = await PIXI.Assets.load(obra.video || obra.img);
+        if (obra.video) {
             const s = tex.baseTexture.resource.source;
-            s.muted = s.loop = s.preload = "auto";
+            s.muted = s.loop = s.playsInline = true;
+            s.preload = "auto";
         }
         texturasCargadas[i] = tex;
-    }
+    });
 }
 
 function onMouseMoveGlobal(e) {
@@ -199,11 +211,16 @@ function cambiarObra() {
     setTimeout(() => {
         indiceActual = (indiceActual + 1) % obras.length;
         if (indiceActual !== 0) { targetScaleMult = 1; currentScaleMult = 1; }
+        
+        // Solo cambiamos si la textura ya terminó de cargar en segundo plano
         if (backgroundSprite && texturasCargadas[indiceActual]) {
             backgroundSprite.texture = texturasCargadas[indiceActual];
             backgroundSprite.rotation = 0; 
             const s = backgroundSprite.texture.baseTexture.resource.source;
-            if (s instanceof HTMLVideoElement) { s.currentTime = 0; s.play().catch(() => {}); }
+            if (s instanceof HTMLVideoElement) { 
+                s.currentTime = 0; 
+                s.play().catch(() => {}); 
+            }
         }
         updateUI();
         if (ui) ui.style.opacity = 1;
