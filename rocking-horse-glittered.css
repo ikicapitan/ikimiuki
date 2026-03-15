@@ -5,57 +5,111 @@
 }
 
 .album-title {
-  font-size: 2.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 2.8rem;
   color: #fff;
   text-transform: uppercase;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   margin-bottom: 20px;
   font-weight: 300;
 }
 
-/* --- CONTENEDOR DE LA ESCENA --- */
+/* --- CONTENEDOR DE LA ESCENA PIXI --- */
 .album-container {
   display: flex; 
   flex-direction: column; 
   align-items: center;
   width: 100%; 
   max-width: 1200px; 
-  margin: 0 auto 40px auto; /* Margen inferior para dar aire al footer */
+  margin: 0 auto;
   padding: 0 20px;
 }
 
+/* Ajustes para el slot del personaje */
 .album-slot.main-feature { 
-  width: 100% !important; 
-  max-width: 1000px !important; 
-  height: 550px !important;
-  background: transparent !important; /* Eliminado fondo de papel e imágenes */
-  position: relative !important;
+  width: 100%; 
+  max-width: 1000px; 
+  height: 600px; /* Altura definida para que el canvas sea visible */
+  background: transparent;
+  position: relative;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.card-container {
-  position: absolute !important; 
-  top: 50% !important; 
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 100% !important; 
-  height: 100% !important;
-  background: transparent !important; /* Se integra con el fondo del sitio */
-  overflow: hidden !important;
-}
-
-/* --- ESTRUCTURA DE LA PÁGINA --- */
-main {
-  padding-bottom: 80px; /* Evita que la escena colisione con el footer */
-}
-
+/* Asegura que el canvas de Pixi se adapte al contenedor */
 #canvas-reel canvas {
-  display: block;
-  width: 100% !important;
+  max-width: 100%;
   height: auto !important;
-  position: absolute;
-  bottom: 0;
-  pointer-events: none; /* Desactiva interacción con el canvas */
+  display: block;
 }
 
-/* Eliminados: .tv-lines, .overlay-link, .info-reel y efectos hover */
+/* --- SECCIÓN DE TEXTO (ESTILO PAPEL) --- */
+.paper-section {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 60px;
+  background-image: url('img/centerBackground.png');
+  background-size: 100% 100%;
+  color: #222;
+  font-family: 'Georgia', serif;
+  line-height: 1.8;
+  font-size: 1.15rem;
+}
+
+/* --- GRID DE VIDEOS --- */
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.video-slot {
+  background-image: url('img/centerBackground.png');
+  background-size: 100% 100%;
+  padding: 30px; 
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.video-wrapper {
+  width: 100%;
+  position: relative;
+  padding-bottom: 56.25%; 
+  height: 0;
+  background: #000;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+
+.video-info {
+  margin-top: 15px;
+  color: #333;
+}
+
+.video-info h3 {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+  .album-slot.main-feature {
+    height: 400px;
+  }
+}

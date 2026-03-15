@@ -1,18 +1,8 @@
-const contenedorCanvas = document.getElementById('canvas-reel');
+const notasMusicales = ["♪", "♫", "♩", "♬", "♭", "♮"];
+let particles = [];
+let lastMousePos = { x: 0, y: 0 };
 
-const appFondo = new PIXI.Application({
-    width: contenedorCanvas.clientWidth,
-    height: contenedorCanvas.clientHeight * 1.5,
-    backgroundAlpha: 0,
-    antialias: true,
-    resolution: window.devicePixelRatio || 1,
-    autoDensity: true
-});
-contenedorCanvas.appendChild(appFondo.view);
-appFondo.view.style.position = "absolute";
-appFondo.view.style.bottom = "0px";
-appFondo.view.style.zIndex = "1";
-
+// 1. Aplicación para el rastro (Capa Superior)
 const appNotas = new PIXI.Application({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -31,37 +21,70 @@ appNotas.view.style.zIndex = "10000";
 const particleContainer = new PIXI.Container();
 appNotas.stage.addChild(particleContainer);
 
-const mainStage = new PIXI.Container();
-appFondo.stage.addChild(mainStage);
+// 2. Aplicación para el Personaje (Slot Local)
+const contenedorCanvas = document.getElementById('canvas-reel');
+const appPersonaje = new PIXI.Application({
+    width: contenedorCanvas.clientWidth,
+    height: contenedorCanvas.clientHeight,
+    backgroundAlpha: 0,
+    antialias: true,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true
+});
+contenedorCanvas.appendChild(appPersonaje.view);
+
+const stagePersonaje = new PIXI.Container();
+appPersonaje.stage.addChild(stagePersonaje);
 
 let character = null;
-const notasMusicales = ["♪", "♫", "♩", "♬", "♭", "♮"];
-let particles = [];
-let lastMousePos = { x: 0, y: 0 };
 
-async function initPixi() {
-    try {
-        const spineLib = window.PIXI_SPINE || PIXI.spine;
-        
-        const atlas = await PIXI.Assets.load('./assets/spine/rockinghorse.atlas');
-        const response = await fetch('./assets/spine/rockinghorse.json');
-        const skeletonDataRaw = await response.json();
-        const spineData = new spineLib.SkeletonJson(new spineLib.AtlasAttachmentLoader(atlas)).readSkeletonData(skeletonDataRaw);
-        
-        character = new spineLib.Spine(spineData);
-        const anim = character.spineData.animations[0].name;
-        character.state.setAnimation(0, anim, true);
-        
-        mainStage.addChild(character);
+// 3. Inicialización y CARGA
+function init() {
+    // Registramos los assets para que el plugin de Spine los reconozca
+    PIXI.Assets.add({
+        alias: 'horseData',
+        src: './assets/spine/rockinghorse.json',
+        data: { spineAtlas: './assets/spine/rockinghorse.atlas' }
+    });
 
-        appFondo.ticker.add(updateLoop);
+    // Cargamos
+    PIXI.Assets.load('horseData').then((resource) => {
+        console.log("Spine cargado con éxito");
+        
+        // Creamos el Spine usando el plugin 3.8
+        character = new PIXI.spine.Spine(resource.spineData);
+        
+        // Seteamos la primera animación que encuentre
+        const animName = character.spineData.animations[0].name;
+        character.state.setAnimation(0, animName, true);
+        
+        stagePersonaje.addChild(character);
+
+        // Activamos los bucles
+        appPersonaje.ticker.add(updateCharacterLayout);
         appNotas.ticker.add(updateParticles);
-        
-        window.addEventListener('resize', onResize);
+
         window.addEventListener('mousemove', onMouseMoveGlobal);
-    } catch (e) { console.error(e); }
+        window.addEventListener('resize', onResize);
+        
+    }).catch(err => {
+        console.error("Error cargando el personaje:", err);
+    });
 }
 
+function updateCharacterLayout() {
+    if (character) {
+        // Escala responsiva al contenedor
+        const scale = appPersonaje.screen.height * 0.00085;
+        character.scale.set(scale);
+        
+        // Posición: Centrado horizontal y apoyado abajo
+        character.x = appPersonaje.screen.width / 2;
+        character.y = appPersonaje.screen.height * 0.9;
+    }
+}
+
+// --- LÓGICA DE PARTÍCULAS (Tu original de games-pixi.js) ---
 function onMouseMoveGlobal(e) {
     const dist = Math.hypot(e.clientX - lastMousePos.x, e.clientY - lastMousePos.y);
     if (dist > 12) {
@@ -75,8 +98,9 @@ function crearNota(x, y) {
         fill: "#ffffff", fontSize: Math.random() * 8 + 14, fontFamily: 'Arial'
     });
     p.x = x; p.y = y; p.anchor.set(0.5);
-    p.vx = (Math.random() - 0.5) * 1.5; p.vy = (Math.random() - 1.8) * 1;
-    p.vRotation = (Math.random() - 0.5) * 0.1; p.life = 1.0;
+    p.vx = (Math.random() - 0.5) * 1.5; 
+    p.vy = (Math.random() - 1.8) * 1;
+    p.life = 1.0;
     particleContainer.addChild(p);
     particles.push(p);
 }
@@ -84,25 +108,18 @@ function crearNota(x, y) {
 function updateParticles() {
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.rotation += p.vRotation;
+        p.x += p.vx; p.y += p.vy;
         p.life -= 0.025; p.alpha = p.life;
-        if (p.life <= 0) { particleContainer.removeChild(p); particles.splice(i, 1); }
-    }
-}
-
-function updateLoop() {
-    const vH = appFondo.screen.height / 1.5;
-    mainStage.position.set(appFondo.screen.width / 2, (appFondo.screen.height - vH) + (vH / 2));
-
-    if (character) {
-        character.scale.set(vH * 0.00085);
-        character.y = vH / 2.5; 
+        if (p.life <= 0) {
+            particleContainer.removeChild(p);
+            particles.splice(i, 1);
+        }
     }
 }
 
 function onResize() {
-    appFondo.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight * 1.5);
     appNotas.renderer.resize(window.innerWidth, window.innerHeight);
+    appPersonaje.renderer.resize(contenedorCanvas.clientWidth, contenedorCanvas.clientHeight);
 }
 
-initPixi();
+init();
