@@ -1,0 +1,61 @@
+/* --- ESTILO DEL TÍTULO --- */
+.album-hero {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.album-title {
+  font-size: 2.5rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+/* --- CONTENEDOR DE LA ESCENA --- */
+.album-container {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  width: 100%; 
+  max-width: 1200px; 
+  margin: 0 auto 40px auto; /* Margen inferior para dar aire al footer */
+  padding: 0 20px;
+}
+
+.album-slot.main-feature { 
+  width: 100% !important; 
+  max-width: 1000px !important; 
+  height: 550px !important;
+  background: transparent !important; /* Eliminado fondo de papel e imágenes */
+  position: relative !important;
+  overflow: hidden;
+}
+
+.card-container {
+  position: absolute !important; 
+  top: 50% !important; 
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important; 
+  height: 100% !important;
+  background: transparent !important; /* Se integra con el fondo del sitio */
+  overflow: hidden !important;
+}
+
+/* --- ESTRUCTURA DE LA PÁGINA --- */
+main {
+  padding-bottom: 80px; /* Evita que la escena colisione con el footer */
+}
+
+#canvas-reel canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  position: absolute;
+  bottom: 0;
+  pointer-events: none; /* Desactiva interacción con el canvas */
+}
+
+/* Eliminados: .tv-lines, .overlay-link, .info-reel y efectos hover */
