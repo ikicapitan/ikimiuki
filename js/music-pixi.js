@@ -1,5 +1,5 @@
 const obras = [
-    { video: "video/reel-1.mp4", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "games.html" }
+    { video: "video/reel-1.mp4", titulo: "ROCKING HORSE GLITTERED", subtitulo: "NEW INSTRUMENTAL ALBUM!", link: "rockinghorseglittered.html" }
 ];
 
 let indiceActual = 0;
