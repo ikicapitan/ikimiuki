@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         footer.innerHTML = `
             <p>&copy; 2026 Iki</p>
             <p>Iki Capitan (Alan Wilhelm)</p>
-            <p>Pepi</p>
+            <p>PepiCA</p>
         `;
     }
 });
