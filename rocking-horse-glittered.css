@@ -80,6 +80,14 @@
   flex-direction: column;
 }
 
+/* Centrado del último slot cuando está solo */
+.video-slot:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 100%;
+  max-width: calc(50% - 20px);
+}
+
 .video-wrapper {
   width: 100%;
   position: relative;
@@ -130,6 +138,11 @@
   .video-grid {
     grid-template-columns: 1fr;
   }
+  
+  .video-slot:last-child:nth-child(odd) {
+    max-width: 100%; /* En móvil vuelve al ancho completo */
+  }
+
   .album-slot.main-feature {
     height: 400px;
   }
