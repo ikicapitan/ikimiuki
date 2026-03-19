@@ -1,3 +1,6 @@
+/* --- blog.css --- */
+/* Estilos específicos para los artículos/posts del álbum Rocking Horse Glittered */
+
 .album-hero {
   text-align: center;
   margin-top: 40px;
@@ -23,6 +26,7 @@
   padding: 0 20px;
 }
 
+/* Contenedor del personaje Spine */
 .album-slot.main-feature { 
   width: 100%; 
   max-width: 1000px; 
@@ -41,59 +45,45 @@
   display: block;
 }
 
+/* Sección de papel (Parte 1 - Texto corto) */
 .paper-section {
   max-width: 900px;
   margin: 40px auto;
-  padding: 60px;
+  /* Margen interno amplio para que el texto no toque los bordes de la imagen */
+  padding: 100px 120px; 
   background-image: url('img/centerBackground.png');
   background-size: 100% 100%;
+  background-repeat: no-repeat;
   color: #222;
   font-family: 'Georgia', serif;
   line-height: 1.8;
   font-size: 1.15rem;
 }
 
+/* Sección de papel (Parte 2 - Texto largo) */
+.paper-section.long-content {
+  background-image: url('img/letrero2.png');
+  /* Hereda el padding de .paper-section */
+}
+
 .paper-content p {
   margin-bottom: 1.5rem;
+  text-align: justify; /* Opcional: para un look más de libro/diario */
 }
 
 .paper-content p:last-child {
   margin-bottom: 0;
 }
 
-.video-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  max-width: 1000px;
-  margin: 60px auto;
-  padding: 0 20px;
-}
-
-.video-slot {
-  background-image: url('img/centerBackground.png');
-  background-size: 100% 100%;
-  padding: 30px; 
-  border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Centrado del último slot cuando está solo */
-.video-slot:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-  justify-self: center;
-  width: 100%;
-  max-width: calc(50% - 20px);
-}
-
+/* Estilo para el video de YouTube dentro del post */
 .video-wrapper {
   width: 100%;
   position: relative;
   padding-bottom: 56.25%; 
   height: 0;
   background: #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-radius: 4px;
 }
 
 .video-wrapper iframe {
@@ -103,47 +93,43 @@
   border: 0;
 }
 
-.video-info {
-  margin-top: 15px;
-  color: #333;
-}
-
-.video-info h3 {
-  margin: 0 0 10px;
-  font-size: 1.3rem;
-  text-transform: uppercase;
-}
-
+/* Enlaces y botón de regreso */
 .video-links {
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
-  flex-direction: row; /* Cambio a fila */
-  flex-wrap: wrap;    /* Por si el texto es largo en móviles */
-  gap: 15px;          /* Espaciado horizontal entre links */
+  flex-direction: row;
+  gap: 20px;
 }
 
 .video-links a {
   color: #c44;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1rem;
-  transition: 0.3s;
+  font-size: 1.1rem;
+  transition: 0.3s ease;
+  padding: 10px 20px;
 }
 
 .video-links a:hover {
   color: #000;
+  transform: translateY(-2px);
 }
 
+/* Ajustes para móviles */
 @media (max-width: 768px) {
-  .video-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .video-slot:last-child:nth-child(odd) {
-    max-width: 100%;
-  }
-
   .album-slot.main-feature {
     height: 400px;
+  }
+  
+  .paper-section {
+    /* Padding más reducido en móviles para no comprimir demasiado el texto */
+    padding: 60px 40px;
+    margin: 20px 10px;
+    font-size: 1rem;
+  }
+
+  .album-title {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
   }
 }
