@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <img src="img/logo.png" alt="Logo" class="main-logo">
             <nav class="cat-nav">
                 <a href="index.html"><img src="img/btn-home.png" alt="Home"></a>
-                <a href="books.html"><img src="img/btn-books.gif" alt="Books"></a>
-                <a href="music.html"><img src="img/btn-music.gif" alt="Music"></a>
+                <a href="books.html"><img src="img/btn-books.png" alt="Books"></a>
+                <a href="music.html"><img src="img/btn-music.png" alt="Music"></a>
                 <a href="games.html"><img src="img/btn-games.png" alt="Games"></a>
                 <a href="more.html"><img src="img/btn-more.png" alt="More"></a>
             </nav>
